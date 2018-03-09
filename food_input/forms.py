@@ -33,8 +33,8 @@ CATEGORIES = (("<geen categorie>", "<geen categorie>"),
 class FoodRecordForm(forms.ModelForm):
     category = forms.ChoiceField(choices=CATEGORIES)
     eenheid = forms.ModelChoiceField(
-        queryset=Measurement.objects.all(),
-        widget=autocomplete.ModelSelect2(url='measurement-autocomplete')
+        queryset=Measurement.objects.all().order_by('amount'),
+        widget=autocomplete.ModelSelect2(url='measurement-autocomplete', forward=['product'])
     )
     aantal_eenheden = forms.FloatField()
     class Meta:
