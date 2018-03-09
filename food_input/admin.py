@@ -8,8 +8,8 @@ from .actions import export_as_csv_action
 
 class FoodRecordAdmin(admin.ModelAdmin):
     list_display = ('patient_id', 'datetime', 'amount', 'product')
-    fields = [field.name for field in FoodRecord._meta.fields + FoodRecord._meta.many_to_many]
-    actions = [export_as_csv_action("CSV Export", fields=fields)]
+    product_fields = [str(field.name) for field in FoodRecord._meta.get_fields()][1:]
+    actions = [export_as_csv_action("CSV Export", fields=product_fields)]
 
 admin.site.register(FoodRecord, FoodRecordAdmin)
 admin.site.register(Product)

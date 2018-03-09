@@ -4,3 +4,4 @@ django-datetime-widget
 django-widget-tweaks
 django-jquery
 six
+unicodecsv
