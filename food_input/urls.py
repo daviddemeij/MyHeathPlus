@@ -4,4 +4,5 @@ from . import views
 urlpatterns = [path('', views.home),
                url('product-autocomplete/',
                views.ProductAutocomplete.as_view(),
-               name='product-autocomplete')]
+               name='product-autocomplete'),
+               path('<int:id>/', views.delete_record, name="delete_record")]

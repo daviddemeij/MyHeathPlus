@@ -5,17 +5,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     {% load static %}
-          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     {% load static %}
     <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" type="text/css"/>
     <script src="{% static 'js/bootstrap.js' %}"></script>
-    
+
     <title>Food input app</title>
 
   </head>
-  <body class="bg-light">
+  <body>
     <div class="container">
         <div class="navbar-header">
             {% if user.is_authenticated %}

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import FoodRecordForm
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required
@@ -22,6 +22,14 @@ def home(request):
     else:
         form = FoodRecordForm()
     return render(request, 'home.html', {'form': form, 'food_records': food_records })
+
+@login_required
+def delete_record(request, id):
+    record = FoodRecord.objects.get(pk=id)
+    if record:
+        if record.creator == request.user:
+            record.delete()
+    return redirect('/')
 
 
 class ProductAutocomplete(autocomplete.Select2QuerySetView):
