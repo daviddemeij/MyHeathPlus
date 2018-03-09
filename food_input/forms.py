@@ -1,5 +1,5 @@
 from django import forms
-from .models import FoodRecord, Product
+from .models import FoodRecord, Product, Measurement
 from dal import autocomplete
 from datetimewidget.widgets import DateTimeWidget
 from django.utils.translation import ugettext_lazy as _
@@ -32,9 +32,14 @@ CATEGORIES = (("<geen categorie>", "<geen categorie>"),
 
 class FoodRecordForm(forms.ModelForm):
     category = forms.ChoiceField(choices=CATEGORIES)
+    eenheid = forms.ModelChoiceField(
+        queryset=Measurement.objects.all(),
+        widget=autocomplete.ModelSelect2(url='measurement-autocomplete')
+    )
+    aantal_eenheden = forms.FloatField()
     class Meta:
         model = FoodRecord
-        fields = ['patient_id', 'datetime', 'amount', 'category', 'product']
+        fields = ['patient_id', 'datetime', 'category', 'product', 'eenheid', 'aantal_eenheden']
         widgets = {
             'product': autocomplete.ModelSelect2(url='product-autocomplete', forward=['category']),
             'datetime': DateTimeWidget(attrs={'id': "id_datetime"}, usel10n=True, bootstrap_version=3)
@@ -43,3 +48,13 @@ class FoodRecordForm(forms.ModelForm):
                   'datetime': _('Datum & tijd'),
                   'amount': _('Hoeveelheid (gram)'),
                   'product': _('Product')}
+
+class MeasurementForm(forms.ModelForm):
+    category = forms.ChoiceField(choices=CATEGORIES)
+
+    class Meta:
+        model = Measurement
+        fields = ['category', 'linked_product', 'name', 'amount']
+        widgets = {
+            'linked_product': autocomplete.ModelSelect2Multiple(url='product-autocomplete', forward=['category'])
+        }
