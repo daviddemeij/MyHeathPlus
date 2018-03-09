@@ -2,8 +2,9 @@ from django import forms
 from .models import FoodRecord, Product
 from dal import autocomplete
 from datetimewidget.widgets import DateTimeWidget
+from django.utils.translation import ugettext_lazy as _
 
-CATEGORIES = (("", "<geen categorie>"),
+CATEGORIES = (("<geen categorie>", "<geen categorie>"),
               ("Aardappelen", "Aardappelen"),
               ("Graanproducten en bindmiddelen", "Graanproducten en bindmiddelen"),
               ("Groenten", "Groenten"),
@@ -38,3 +39,7 @@ class FoodRecordForm(forms.ModelForm):
             'product': autocomplete.ModelSelect2(url='product-autocomplete', forward=['category']),
             'datetime': DateTimeWidget(attrs={'id': "id_datetime"}, usel10n=True, bootstrap_version=3)
         }
+        labels = {'patient_id': _('Patient ID'),
+                  'datetime': _('Datum & tijd'),
+                  'amount': _('Hoeveelheid (gram)'),
+                  'product': _('Product')}
