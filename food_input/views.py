@@ -3,7 +3,7 @@ from .forms import FoodRecordForm
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Product, FoodRecord
+from .models import Product, FoodRecord, Measurement
 from django.views.generic import ListView
 
 import datetime
@@ -14,14 +14,15 @@ def home(request):
     if request.method == 'POST':
         form = FoodRecordForm(request.POST)
         if form.is_valid():
+            eenheid = Measurement.objects.get(pk=request.POST.get("eenheid"))
             instance = form.save(commit=False)  # does nothing, just trigger the validation
+            instance.amount = float(request.POST.get("aantal_eenheden")) * eenheid.amount
             instance.creator = request.user
             fields = [field.name for field in FoodRecord._meta.fields + FoodRecord._meta.many_to_many]
-            print(fields)
+
             for field in fields:
                 if field.startswith("field_"):
                     nutrition_value = getattr(instance.product, field)
-                    print(nutrition_value, bool(nutrition_value))
                     if nutrition_value:
                         setattr(instance, field, float(nutrition_value)*(instance.amount / float(instance.product.hoeveelheid)))
             instance.save()
@@ -60,3 +61,16 @@ class ProductAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(product_omschrijving__contains=self.q)
 
         return qs
+
+class MeasurementAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Measurement.objects.none()
+
+        qs = Measurement.objects.all()
+
+        #product = self.forwarded.get('product')
+        if self.q:
+            qs = qs.filter(linked_product=self.q)
+        return qs.order_by('created_at')
+
