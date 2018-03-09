@@ -1,0 +1,4 @@
+django
+django-autocomplete-light
+django-datetime-widget
+django-widget-tweaks
