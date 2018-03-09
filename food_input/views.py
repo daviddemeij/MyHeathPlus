@@ -17,6 +17,9 @@ def home(request):
             eenheid = Measurement.objects.get(pk=request.POST.get("eenheid"))
             instance = form.save(commit=False)  # does nothing, just trigger the validation
             instance.amount = float(request.POST.get("aantal_eenheden")) * eenheid.amount
+
+            if instance.product not in eenheid.linked_product.all():
+                eenheid.linked_product.add(instance.product)
             instance.creator = request.user
             fields = [field.name for field in FoodRecord._meta.fields + FoodRecord._meta.many_to_many]
 
@@ -69,8 +72,8 @@ class MeasurementAutocomplete(autocomplete.Select2QuerySetView):
 
         qs = Measurement.objects.all()
 
-        #product = self.forwarded.get('product')
-        if self.q:
-            qs = qs.filter(linked_product=self.q)
-        return qs.order_by('created_at')
+        product = self.forwarded.get('product')
+        if product:
+            qs = qs.filter(linked_product=product)
+        return qs.order_by('amount')
 
