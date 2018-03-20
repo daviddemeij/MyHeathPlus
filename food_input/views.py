@@ -10,7 +10,6 @@ import datetime
 # Create your views here.
 @login_required
 def home(request):
-    food_records = FoodRecord.objects.filter(creator=request.user).order_by('-created_at')
     if request.method == 'POST':
         form = FoodRecordForm(request.POST)
         if form.is_valid():
@@ -33,11 +32,12 @@ def home(request):
             print("input is not valid!")
     else:
         form = FoodRecordForm()
-    return render(request, 'home.html', {'form': form, 'food_records': food_records })
+    food_records = FoodRecord.objects.filter(creator=request.user).order_by('-created_at')
+    return render(request, 'home.html', {'form': form, 'food_records': food_records})
 
 @login_required
 def delete_record(request, id):
-    record = FoodRecord.objects.get(pk=id)
+    record = FoodRecord.objects.filter(pk=id).first()
     if record:
         if record.creator == request.user:
             record.delete()
