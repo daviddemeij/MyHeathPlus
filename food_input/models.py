@@ -164,9 +164,9 @@ class Product(models.Model):
     def __str__(self):
         return self.product_omschrijving + " (" + self.productgroep_oms + ")"
 
-    class Meta:
-        managed = False
-        db_table = 'food_input_product'
+    #class Meta:
+        #managed = False
+        #db_table = 'food_input_product'
 
 # Create your models here.
 class FoodRecord(models.Model):
