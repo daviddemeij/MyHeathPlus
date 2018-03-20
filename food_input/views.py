@@ -37,7 +37,7 @@ def home(request):
 
 @login_required
 def delete_record(request, id):
-    record = FoodRecord.objects.get(pk=id)
+    record = FoodRecord.objects.filter(pk=id).first()
     if record:
         if record.creator == request.user:
             record.delete()
