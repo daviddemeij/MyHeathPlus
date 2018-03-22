@@ -73,7 +73,10 @@ class MeasurementAutocomplete(autocomplete.Select2QuerySetView):
         qs = Measurement.objects.all()
 
         product = self.forwarded.get('product')
-        if product:
+
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+        elif product:
             qs = qs.filter(linked_product=product)
         return qs.order_by('amount')
 
