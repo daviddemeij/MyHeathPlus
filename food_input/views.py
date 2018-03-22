@@ -26,6 +26,8 @@ def home(request):
                 if field.startswith("field_"):
                     nutrition_value = getattr(instance.product, field)
                     if nutrition_value:
+                        if "sp" in nutrition_value:
+                            nutrition_value = 0.0
                         setattr(instance, field, float(nutrition_value)*(instance.amount / float(instance.product.hoeveelheid)))
             instance.save()
         else:
