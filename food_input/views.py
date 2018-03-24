@@ -2,23 +2,36 @@ from django.shortcuts import render, redirect
 from .forms import FoodRecordForm
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Product, FoodRecord, Measurement
-from django.views.generic import ListView
 
-import datetime
-# Create your views here.
 @login_required
 def home(request):
     if request.method == 'POST':
         form = FoodRecordForm(request.POST)
+
+        # Link productgroup to measurement unit
+        link_measurement = request.POST.get('koppel_eenheid_aan_alle_producten_binnen_deze_categorie')
+        category = Product.objects.get(pk=request.POST.get('product')).productgroep_oms
+        eenheid = Measurement.objects.get(pk=request.POST.get("eenheid"))
+        if link_measurement and category != "<geen categorie>" and eenheid:
+            print("adding \"" + str(eenheid) + "\" to product group: " + category)
+            form.add_error('eenheid', "\"" + str(eenheid) + "\" succesvol gekoppeld aan productcategorie: " + category)
+            products = Product.objects.all().filter(productgroep_oms=category)
+            linked_products = eenheid.linked_product.all()
+            for product in products:
+                if product not in linked_products:
+                    eenheid.linked_product.add(product)
+
+        # Process form
         if form.is_valid():
             eenheid = Measurement.objects.get(pk=request.POST.get("eenheid"))
-            instance = form.save(commit=False)  # does nothing, just trigger the validation
+            instance = form.save(commit=False)
             instance.amount = float(request.POST.get("aantal_eenheden")) * eenheid.amount
 
             if instance.product not in eenheid.linked_product.all():
                 eenheid.linked_product.add(instance.product)
+                form.add_error('eenheid',
+                               "\"" + str(eenheid) + "\" is nu gekoppeld aan: " + str(instance.product))
             instance.creator = request.user
             fields = [field.name for field in FoodRecord._meta.fields + FoodRecord._meta.many_to_many]
 
@@ -29,7 +42,12 @@ def home(request):
                         if "sp" in nutrition_value:
                             nutrition_value = 0.0
                         setattr(instance, field, float(nutrition_value)*(instance.amount / float(instance.product.hoeveelheid)))
-            instance.save()
+            existing_object = FoodRecord.objects.filter(patient_id=instance.patient_id).filter(datetime=instance.datetime).filter(product=instance.product).filter(amount=instance.amount).first()
+            if existing_object:
+                print("foodrecord already exists")
+                form.add_error('aantal_eenheden', "Deze log is al eerder ingevoerd in de database.")
+            else:
+                instance.save()
         else:
             print("input is not valid!")
     else:
@@ -48,16 +66,12 @@ def delete_record(request, id):
 
 class ProductAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        # Don't forget to filter out results depending on the visitor !
-        #if not self.request.user.is_authenticated():
-        #    return Product.objects.none()
-
         if not self.request.user.is_authenticated:
             return Product.objects.none()
 
         qs = Product.objects.all()
 
-        category = self.forwarded.get('category', None)
+        category = self.forwarded.get('categorie', None)
 
         if category and category != "<geen categorie>":
             qs = qs.filter(productgroep_oms=category)

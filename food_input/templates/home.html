@@ -9,15 +9,19 @@
   <form method="post">
     {% csrf_token %}
     {% for field in form.visible_fields %}
-      <div class="mb-3">
-          <div class="form-group">
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field|add_class:'form-control' }}
-            {% for error in field.errors %}
-              <span class="help-block">{{ error }}</span>
-            {% endfor %}
+      {% if field.id_for_label == "id_koppel_eenheid_aan_alle_producten_binnen_deze_categorie" %}
+       <label for="{{ field.id_for_label }}">{{ field.label }}</label>: {{ field }}
+      {% else %}
+          <div class="mb-3">
+              <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field|add_class:'form-control' }}
+                {% for error in field.errors %}
+                  <span class="help-block">{{ error }}</span>
+                {% endfor %}
+              </div>
           </div>
-      </div>
+      {% endif %}
     {% endfor %}
 
     <div class="form-group">

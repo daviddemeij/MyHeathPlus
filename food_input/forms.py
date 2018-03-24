@@ -31,17 +31,18 @@ CATEGORIES = (("<geen categorie>", "<geen categorie>"),
               )
 
 class FoodRecordForm(forms.ModelForm):
-    category = forms.ChoiceField(choices=CATEGORIES)
+    categorie = forms.ChoiceField(choices=CATEGORIES)
     eenheid = forms.ModelChoiceField(
         queryset=Measurement.objects.all().order_by('amount'),
         widget=autocomplete.ModelSelect2(url='measurement-autocomplete', forward=['product'])
     )
+    koppel_eenheid_aan_alle_producten_binnen_deze_categorie = forms.BooleanField(required=False)
     aantal_eenheden = forms.FloatField()
     class Meta:
         model = FoodRecord
-        fields = ['patient_id', 'datetime', 'category', 'product', 'eenheid', 'aantal_eenheden']
+        fields = ['patient_id', 'datetime', 'categorie', 'product', 'eenheid', 'koppel_eenheid_aan_alle_producten_binnen_deze_categorie', 'aantal_eenheden']
         widgets = {
-            'product': autocomplete.ModelSelect2(url='product-autocomplete', forward=['category']),
+            'product': autocomplete.ModelSelect2(url='product-autocomplete', forward=['categorie']),
             'datetime': DateTimeWidget(attrs={'id': "id_datetime"}, usel10n=True, bootstrap_version=3)
         }
         labels = {'patient_id': _('Patient ID'),
@@ -50,11 +51,11 @@ class FoodRecordForm(forms.ModelForm):
                   'product': _('Product')}
 
 class MeasurementForm(forms.ModelForm):
-    category = forms.ChoiceField(choices=CATEGORIES)
+    categorie = forms.ChoiceField(choices=CATEGORIES)
 
     class Meta:
         model = Measurement
-        fields = ['category', 'linked_product', 'name', 'amount']
+        fields = ['categorie', 'linked_product', 'name', 'amount']
         widgets = {
-            'linked_product': autocomplete.ModelSelect2Multiple(url='product-autocomplete', forward=['category'])
+            'linked_product': autocomplete.ModelSelect2Multiple(url='product-autocomplete', forward=['categorie'])
         }
