@@ -321,7 +321,7 @@ class FoodRecord(models.Model):
         return " Patient " + str(self.patient_id) + " (" + self.datetime.strftime('%Y-%m-%d %H:%M') + ") - " + self.product.product_omschrijving + " (" + str(self.amount) + " gram) "
 
 class Measurement(models.Model):
-    linked_product = models.ManyToManyField(Product)
+    linked_product = models.ManyToManyField(Product, blank=True)
     name = models.TextField()
     amount = models.FloatField()
     created_at = models.DateTimeField(default=dt.datetime.now)
