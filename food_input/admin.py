@@ -5,15 +5,25 @@ from .models import Product, FoodRecord, Measurement
 from django.http import HttpResponse, HttpResponseForbidden
 from .actions import export_as_csv_action
 from .forms import MeasurementForm
+from django.contrib.auth.models import User
 
+@admin.register(FoodRecord)
 class FoodRecordAdmin(admin.ModelAdmin):
-    list_display = ('patient_id', 'datetime', 'amount', 'product')
+    list_display = ('patient_id', 'datetime', 'amount', 'product', 'creator')
     product_fields = [str(field.name) for field in FoodRecord._meta.get_fields()][1:]
     actions = [export_as_csv_action("CSV Export", fields=product_fields)]
+    list_filter = ('creator', 'patient_id')
+
+
+
+#class FoodRecordAdmin(admin.ModelAdmin):
+#    list_display = ('patient_id', 'datetime', 'amount', 'product')
+#    product_fields = [str(field.name) for field in FoodRecord._meta.get_fields()][1:]
+#    actions = [export_as_csv_action("CSV Export", fields=product_fields)]
 
 class MeasurementAdmin(admin.ModelAdmin):
     form = MeasurementForm
 
-admin.site.register(FoodRecord, FoodRecordAdmin)
+#admin.site.register(FoodRecord, FoodRecordAdmin)
 admin.site.register(Product)
 admin.site.register(Measurement, MeasurementAdmin)
