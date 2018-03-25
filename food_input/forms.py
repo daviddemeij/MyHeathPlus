@@ -51,11 +51,6 @@ class FoodRecordForm(forms.ModelForm):
                   'product': _('Product')}
 
 class MeasurementForm(forms.ModelForm):
-    categorie = forms.ChoiceField(choices=CATEGORIES)
-
     class Meta:
         model = Measurement
-        fields = ['categorie', 'linked_product', 'name', 'amount']
-        widgets = {
-            'linked_product': autocomplete.ModelSelect2Multiple(url='product-autocomplete', forward=['categorie'])
-        }
+        fields = ['name', 'amount', 'linked_product']
