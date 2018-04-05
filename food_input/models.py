@@ -162,7 +162,10 @@ class Product(models.Model):
     field_13006 = models.TextField(db_column='_13006', blank=True, null=True)  # Field renamed because it started with '_'.
 
     def __str__(self):
-        return self.product_omschrijving + " (" + self.productgroep_oms + ")"
+        if self.fabrikantnaam != "":
+            return self.fabrikantnaam + " " + self.product_omschrijving + " (" + self.productgroep_oms + ")"
+        else:
+            return self.product_omschrijving + " (" + self.productgroep_oms + ")"
 
     class Meta:
         managed = False
