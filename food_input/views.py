@@ -27,7 +27,7 @@ def home(request):
             eenheid = Measurement.objects.get(pk=request.POST.get("eenheid"))
             instance = form.save(commit=False)
             instance.amount = float(request.POST.get("aantal_eenheden")) * eenheid.amount
-
+            instance.measurement = eenheid
             if instance.product not in eenheid.linked_product.all():
                 eenheid.linked_product.add(instance.product)
                 form.add_error('eenheid',

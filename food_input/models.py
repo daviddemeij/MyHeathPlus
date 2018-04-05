@@ -168,6 +168,16 @@ class Product(models.Model):
         managed = False
         db_table = 'food_input_product'
 
+
+class Measurement(models.Model):
+    linked_product = models.ManyToManyField(Product, blank=True)
+    name = models.TextField()
+    amount = models.FloatField()
+    created_at = models.DateTimeField(default=dt.datetime.now)
+    def __str__(self):
+        return str(self.name) + " (" + str(self.amount) + " gram)"
+
+
 # Create your models here.
 class FoodRecord(models.Model):
     patient_id = models.IntegerField()
@@ -176,6 +186,7 @@ class FoodRecord(models.Model):
     amount = models.FloatField()
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=False)
     created_at = models.DateTimeField(default=dt.datetime.now)
+    measurement = models.ForeignKey(Measurement, on_delete=models.SET_NULL, null=True, blank=False)
 
     field_01001 = models.TextField(db_column='_01001', blank=True, null=True)  # Field renamed because it started with '_'.
     field_01002 = models.TextField(db_column='_01002', blank=True, null=True)  # Field renamed because it started with '_'.
@@ -319,11 +330,3 @@ class FoodRecord(models.Model):
 
     def __str__(self):
         return " Patient " + str(self.patient_id) + " (" + self.datetime.strftime('%Y-%m-%d %H:%M') + ") - " + self.product.product_omschrijving + " (" + str(self.amount) + " gram) "
-
-class Measurement(models.Model):
-    linked_product = models.ManyToManyField(Product, blank=True)
-    name = models.TextField()
-    amount = models.FloatField()
-    created_at = models.DateTimeField(default=dt.datetime.now)
-    def __str__(self):
-        return str(self.name) + " (" + str(self.amount) + " gram)"
