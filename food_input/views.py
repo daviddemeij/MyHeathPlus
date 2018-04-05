@@ -98,7 +98,7 @@ class ProductAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(productgroep_oms=category)
 
         if self.q:
-            qs = qs.filter(product_omschrijving__contains=self.q)
+            qs = qs.filter(product_omschrijving__icontains=self.q) | qs.filter(fabrikantnaam__icontains=self.q)
 
         return qs
 
