@@ -41,14 +41,22 @@
              </tr>
          </thead>
          <tbody>
-             {% for food_record in food_records %}
-                 <tr>
-                     <td>{{food_record.patient_id}}</td>
-                     <td>{{food_record.datetime}}</td>
-                     <td>{{food_record.product}}</td>
-                     <td>{{food_record.amount}}</td>
-                     <td><a href="/{{food_record.id}}"><span class="glyphicon glyphicon-remove"></span></a></td></tr>
-             {% endfor %}
+        {% for date, dagdelen in food_records_grouped.items %}
+            <tr><th colspan="5" class="text-center">{{ date }}</th></tr>
+
+            {% for dagdeel, food_records in dagdelen.items %}
+                <tr><th></th><th colspan="4">{{ dagdeel }}</th></tr>
+
+                {% for food_record in food_records %}
+                     <tr>
+                         <td>{{food_record.patient_id}}</td>
+                         <td>{{food_record.datetime}}</td>
+                         <td>{{food_record.product}}</td>
+                         <td>{{food_record.amount}}</td>
+                         <td><a href="/{{food_record.id}}"><span class="glyphicon glyphicon-remove"></span></a></td></tr>
+                {% endfor %}
+            {% endfor %}
+         {% endfor %}
          </tbody>
          </table>
 </div>

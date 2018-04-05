@@ -3,6 +3,7 @@ from .forms import FoodRecordForm
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required
 from .models import Product, FoodRecord, Measurement
+from collections import defaultdict
 
 @login_required
 def home(request):
@@ -27,7 +28,7 @@ def home(request):
             eenheid = Measurement.objects.get(pk=request.POST.get("eenheid"))
             instance = form.save(commit=False)
             instance.amount = float(request.POST.get("aantal_eenheden")) * eenheid.amount
-
+            instance.measurement = eenheid
             if instance.product not in eenheid.linked_product.all():
                 eenheid.linked_product.add(instance.product)
                 form.add_error('eenheid',
@@ -52,8 +53,28 @@ def home(request):
             print("input is not valid!")
     else:
         form = FoodRecordForm()
-    food_records = FoodRecord.objects.filter(creator=request.user).order_by('-created_at')
-    return render(request, 'home.html', {'form': form, 'food_records': food_records})
+    food_records = FoodRecord.objects.filter(creator=request.user).order_by('datetime')
+    food_records_grouped = defaultdict(defaultdict)
+    for food_record in food_records:
+        date = food_record.datetime.date()
+        hour = food_record.datetime.hour
+        if hour < 12:
+            if 'Ochtend' in food_records_grouped[date]:
+                food_records_grouped[date]['Ochtend'].append(food_record)
+            else:
+                food_records_grouped[date]['Ochtend'] = [food_record]
+        elif 12 <= hour < 17:
+            if 'Middag' in food_records_grouped[date]:
+                food_records_grouped[date]['Middag'].append(food_record)
+            else:
+                food_records_grouped[date]['Middag'] = [food_record]
+        else:
+            if 'Avond' in food_records_grouped[date]:
+                food_records_grouped[date]['Avond'].append(food_record)
+            else:
+                food_records_grouped[date]['Avond'] = [food_record]
+
+    return render(request, 'home.html', {'form': form, 'food_records_grouped': dict(food_records_grouped)})
 
 @login_required
 def delete_record(request, id):
