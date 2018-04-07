@@ -1,6 +1,6 @@
 import unicodecsv
 from django.http import HttpResponse
-
+from .models import Product, FoodRecord
 
 def export_as_csv_action(description="Export selected objects as CSV file",
                          fields=None, exclude=None, header=True):
@@ -32,3 +32,13 @@ def export_as_csv_action(description="Export selected objects as CSV file",
 
     export_as_csv.short_description = description
     return export_as_csv
+
+def count_occurrence():
+    occurrence_list = []
+    for product in Product.objects.all():
+        occurrence = FoodRecord.objects.filter(product=product.id).count()
+        if product.occurrence != occurrence:
+            product.occurrence = occurrence
+            product.save()
+        occurrence_list.append((product.product_omschrijving, occurrence))
+    return occurrence_list
