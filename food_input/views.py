@@ -2,8 +2,14 @@ from django.shortcuts import render, redirect
 from .forms import FoodRecordForm
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required
-from .models import Product, FoodRecord, Measurement
+from .models import FoodRecord, Measurement, Product
 from collections import defaultdict
+from .actions import count_occurrence
+
+@login_required
+def count(request):
+    occurrence_list = count_occurrence()
+    return render(request, 'count.html', {'occurrence_list': occurrence_list })
 
 @login_required
 def home(request):
@@ -50,6 +56,9 @@ def home(request):
                 print("foodrecord already exists")
                 form.add_error('aantal_eenheden', "Deze log is al eerder ingevoerd in de database.")
             else:
+                product = instance.product
+                product.occurrence += 1
+                product.save()
                 instance.save()
         else:
             print("input is not valid!")
@@ -83,6 +92,10 @@ def delete_record(request, id):
     record = FoodRecord.objects.filter(pk=id).first()
     if record:
         if record.creator == request.user:
+            product = record.product
+            if product.occurrence > 0:
+                product.occurrence -= 1
+                product.save()
             record.delete()
     return redirect('/')
 
@@ -102,7 +115,7 @@ class ProductAutocomplete(autocomplete.Select2QuerySetView):
         if self.q:
             qs = qs.filter(product_omschrijving__icontains=self.q) | qs.filter(fabrikantnaam__icontains=self.q)
 
-        return qs
+        return qs.order_by('-occurrence')
 
 class MeasurementAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):

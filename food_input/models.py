@@ -12,6 +12,7 @@ import datetime as dt
 
 class Product(models.Model):
     id = models.IntegerField(blank=True, null=False, primary_key=True)
+    occurrence = models.IntegerField(blank=False, null=False, default=0)
     productgroep_oms = models.TextField(db_column='Productgroep_oms', blank=True, null=True)  # Field name made lowercase.
     productgroepcode = models.TextField(db_column='Productgroepcode', blank=True, null=True)  # Field name made lowercase.
     controlegetal = models.TextField(db_column='Controlegetal', blank=True, null=True)  # Field name made lowercase.
@@ -168,7 +169,7 @@ class Product(models.Model):
             return self.product_omschrijving + " (" + self.productgroep_oms + ")"
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'food_input_product'
 
 
