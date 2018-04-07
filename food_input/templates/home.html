@@ -37,6 +37,10 @@
                  <th scope="col">Datum & tijd</th>
                  <th scope="col">Product</th>
                  <th scope="col">Hoeveelheid (gram)</th>
+                 <th scope="col">Kcal</th>
+                 <th scope="col">Koolhydraten</th>
+                 <!--<th scope="col">Eiwit</th>
+                 <th scope="col">Vet</th>-->
                  <th scope="col">Delete</th>
              </tr>
          </thead>
@@ -53,6 +57,10 @@
                          <td>{{food_record.datetime}}</td>
                          <td>{{food_record.product}}</td>
                          <td>{{food_record.amount}}</td>
+                         <td>{{food_record.field_01001|floatformat}}</td>
+                         <td>{{food_record.field_05001|floatformat}}</td>
+                         <!--<td>{{food_record.field_02002|floatformat}}</td>
+                         <td>{{food_record.field_03001|floatformat}}</td>-->
                          <td><a href="/{{food_record.id}}"><span class="glyphicon glyphicon-remove"></span></a></td></tr>
                 {% endfor %}
             {% endfor %}

@@ -29,6 +29,8 @@ def home(request):
             instance = form.save(commit=False)
             instance.amount = float(request.POST.get("aantal_eenheden")) * eenheid.amount
             instance.measurement = eenheid
+            instance.amount_of_measurements = float(request.POST.get("aantal_eenheden"))
+
             if instance.product not in eenheid.linked_product.all():
                 eenheid.linked_product.add(instance.product)
                 form.add_error('eenheid',
@@ -98,7 +100,7 @@ class ProductAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(productgroep_oms=category)
 
         if self.q:
-            qs = qs.filter(product_omschrijving__icontains=self.q)
+            qs = qs.filter(product_omschrijving__icontains=self.q) | qs.filter(fabrikantnaam__icontains=self.q)
 
         return qs
 
