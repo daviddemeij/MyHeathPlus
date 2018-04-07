@@ -6,68 +6,20 @@
   {% load widget_tweaks %}
 <div class="row">
 
-  <form method="post">
-    {% csrf_token %}
-    {% for field in form.visible_fields %}
-      {% if field.id_for_label == "id_koppel_eenheid_aan_alle_producten_binnen_deze_categorie" %}
-       <label for="{{ field.id_for_label }}">{{ field.label }}</label>: {{ field }}
-      {% else %}
-          <div class="mb-3">
-              <div class="form-group">
-                <label for='{{ field.id_for_label }}'>{{ field.label }}</label>
-                {{ field|add_class:'form-control' }}
-                {% for error in field.errors %}
-                  <span class="help-block">{{ error }}</span>
-                {% endfor %}
-              </div>
-          </div>
-      {% endif %}
-    {% endfor %}
 
-    <div class="form-group">
-      <button type="submit" class="btn btn-success">
-        <span class="glyphicon glyphicon-ok"></span> Save
-      </button>
-    </div>
-    </form>
      <table class="table">
          <thead class="thead-light">
              <tr>
-                 <th scope="col">Patient ID</th>
-                 <th scope="col">Datum & tijd</th>
                  <th scope="col">Product</th>
-                 <th scope="col">Hoeveelheid</th>
-                 <th scope="col">Kcal</th>
-                 <th scope="col">Koolhydraten</th>
-                 <!--<th scope="col">Eiwit</th>
-                 <th scope="col">Vet</th>-->
-                 <th scope="col">Delete</th>
+                 <th scope="col">Occurrence</th>
              </tr>
          </thead>
          <tbody>
-        {% for date, dagdelen in food_records_grouped.items %}
-            <tr><th colspan="5" class="text-center">{{ date }}</th></tr>
-
-            {% for dagdeel, food_records in dagdelen.items %}
-                <tr><th></th><th colspan="4">{{ dagdeel }}</th></tr>
-
-                {% for food_record in food_records %}
-                     <tr>
-                         <td>{{ food_record.patient_id }}</td>
-                         <td>{{ food_record.datetime }}</td>
-                         <td>{{ food_record.product }}</td>
-                         {% if food_record.measurement and food_record.measurement.name != "gram" %}
-                            <td><input size="3" class="form-inline" name="aantal_eenheden" step="any" required="" id="id_aantal_eenheden" value="{{ food_record.amount_of_measurements|floatformat }}"> {{ food_record.measurement.name }} ({{ food_record.amount|floatformat }} gram)</td>
-                         {% else %}
-                            <td>{{ food_record.amount }} gram</td>
-                         {% endif %}
-                         <td>{{ food_record.field_01001|floatformat }}</td>
-                         <td>{{ food_record.field_05001|floatformat }}</td>
-                         <!--<td>{{food_record.field_02002|floatformat}}</td>
-                         <td>{{food_record.field_03001|floatformat}}</td>-->
-                         <td><a href="/{{food_record.id}}"><span class="glyphicon glyphicon-remove"></span></a></td></tr>
-                {% endfor %}
-            {% endfor %}
+        {% for product, occurrence in occurrence_list %}
+            <tr>
+                 <td>{{ product }}</td>
+                 <td>{{ occurrence }}</td>
+            </tr>
          {% endfor %}
          </tbody>
          </table>
