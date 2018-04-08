@@ -14,7 +14,7 @@
       {% else %}
           <div class="mb-3">
               <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <label for='{{ field.id_for_label }}'>{{ field.label }}</label>
                 {{ field|add_class:'form-control' }}
                 {% for error in field.errors %}
                   <span class="help-block">{{ error }}</span>
@@ -30,13 +30,15 @@
       </button>
     </div>
     </form>
+
+
      <table class="table">
          <thead class="thead-light">
              <tr>
                  <th scope="col">Patient ID</th>
                  <th scope="col">Datum & tijd</th>
                  <th scope="col">Product</th>
-                 <th scope="col">Hoeveelheid (gram)</th>
+                 <th scope="col">Hoeveelheid</th>
                  <th scope="col">Kcal</th>
                  <th scope="col">Koolhydraten</th>
                  <!--<th scope="col">Eiwit</th>
@@ -50,18 +52,30 @@
 
             {% for dagdeel, food_records in dagdelen.items %}
                 <tr><th></th><th colspan="4">{{ dagdeel }}</th></tr>
-
                 {% for food_record in food_records %}
-                     <tr>
-                         <td>{{food_record.patient_id}}</td>
-                         <td>{{food_record.datetime}}</td>
-                         <td>{{food_record.product}}</td>
-                         <td>{{food_record.amount}}</td>
-                         <td>{{food_record.field_01001|floatformat}}</td>
-                         <td>{{food_record.field_05001|floatformat}}</td>
+                    <form method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="food_record_id" value="{{ food_record.id }}">
+                         <tr>
+                             <td>{{ food_record.patient_id }}</td>
+                             <td>{{ food_record.datetime.date }}
+                                 <input onchange="this.form.submit()" size="4" class="form-inline" name="update_datetime" step="any" required="" value="{{ food_record.datetime.time }}">
+
+                         </td>
+                         <td>{{ food_record.product }}</td>
+
+                             {% if food_record.measurement and food_record.measurement.name != "gram" %}
+                                <td><input onchange="this.form.submit()" size="3" class="form-inline" name="update_eenheden" step="any" required="" value="{{ food_record.amount_of_measurements }}"> {{ food_record.measurement.name }} ({{ food_record.amount|floatformat }} gram)</td>
+                             {% else %}
+                                <td><input onchange="this.form.submit()" size="3" class="form-inline" name="update_eenheden" step="any" required="" value="{{ food_record.amount }}"> gram</td>
+                             {% endif %}
+
+                         <td>{{ food_record.field_01001|floatformat }}</td>
+                         <td>{{ food_record.field_05001|floatformat }}</td>
                          <!--<td>{{food_record.field_02002|floatformat}}</td>
                          <td>{{food_record.field_03001|floatformat}}</td>-->
                          <td><a href="/{{food_record.id}}"><span class="glyphicon glyphicon-remove"></span></a></td></tr>
+                    </form>
                 {% endfor %}
             {% endfor %}
          {% endfor %}
