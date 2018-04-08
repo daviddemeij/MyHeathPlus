@@ -185,6 +185,8 @@ class DisplayName(models.Model):
     id = models.AutoField(primary_key=True)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     name = models.TextField()
+    creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(default=dt.datetime.now)
 
     def __str__(self):
         if self.product.fabrikantnaam != "":
