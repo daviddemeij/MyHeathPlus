@@ -100,15 +100,17 @@ def home(request):
                         if product not in linked_products:
                             eenheid.linked_product.add(product)
 
-                print(request.POST.get('use_different_name'))
-                print(request.POST.get('different_name'))
                 if request.POST.get('use_different_name'):
                     if request.POST.get('different_name'):
                         display_name = DisplayName.objects.create(name=request.POST.get('different_name'),
                                                                   product=instance.product,
                                                                   creator=request.user)
                         instance.display_name = display_name
-
+                        mutable = request.POST._mutable
+                        request.POST._mutable = True
+                        request.POST['display_name'] = display_name.id
+                        request.POST._mutable = mutable
+                        FoodRecordForm(request.POST)
 
                 if instance.product not in eenheid.linked_product.all():
                     eenheid.linked_product.add(instance.product)
