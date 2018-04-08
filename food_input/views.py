@@ -188,7 +188,8 @@ class ProductAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(product__productgroep_oms=category)
 
         if self.q:
-            qs = qs.filter(name__icontains=self.q) | qs.filter(product__fabrikantnaam__icontains=self.q)
+            for s in self.q.split(" "):
+                qs = qs.filter(name__icontains=s) | qs.filter(product__fabrikantnaam__icontains=s)
 
         return qs.order_by('-product__occurrence')
 
