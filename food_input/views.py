@@ -40,16 +40,16 @@ def home(request):
         if food_record and request.user == food_record.creator:
             if food_record.measurement:
                 if food_record.amount_of_measurements:
-                    form = FoodRecordForm(initial={'patient_id': food_record.patient_id, 'datetime': food_record.datetime,
+                    form = FoodRecordForm(initial={'patient_id': food_record.patient_id,
                                                    'product': food_record.product, 'eenheid': food_record.measurement,
                                                    'aantal_eenheden': food_record.amount_of_measurements})
                 else:
-                    form = FoodRecordForm(initial={'patient_id': food_record.patient_id, 'datetime': food_record.datetime,
+                    form = FoodRecordForm(initial={'patient_id': food_record.patient_id,
                                                    'product': food_record.product, 'eenheid': food_record.measurement,
                                                    'aantal_eenheden': food_record.amount / food_record.measurement.amount})
             else:
                 measurement = Measurement.objects.filter(name="gram").first()
-                form = FoodRecordForm(initial={'patient_id': food_record.patient_id, 'datetime': food_record.datetime,
+                form = FoodRecordForm(initial={'patient_id': food_record.patient_id,
                                                'product': food_record.product, 'eenheid': measurement,
                                                'aantal_eenheden': food_record.amount})
         else:
