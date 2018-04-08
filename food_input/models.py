@@ -186,11 +186,18 @@ class DisplayName(models.Model):
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     name = models.TextField()
 
+    def __str__(self):
+        if self.product.fabrikantnaam != "":
+            return self.product.fabrikantnaam + " " + self.name + " (" + self.product.productgroep_oms + ")"
+        else:
+            return self.name + " (" + self.product.productgroep_oms + ")"
+
 # Create your models here.
 class FoodRecord(models.Model):
     patient_id = models.IntegerField()
     datetime = models.DateTimeField()
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    display_name = models.ForeignKey(DisplayName, on_delete=models.PROTECT, blank=True, null=True)
     amount = models.FloatField()
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=False)
     created_at = models.DateTimeField(default=dt.datetime.now)
