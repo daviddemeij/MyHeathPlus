@@ -7,6 +7,13 @@ from collections import defaultdict
 from .actions import count_occurrence
 import datetime
 
+def convert_int(s):
+    try:
+        value = int(s)
+        return value
+    except:
+        return False
+
 def convert_float(s):
     try:
         value = float(s)
@@ -28,7 +35,17 @@ def count(request):
 
 @login_required
 def home(request):
-    if request.method == 'POST':
+    if request.method == 'GET' and convert_int(request.GET.get('copy')):
+        food_record = FoodRecord.objects.filter(id=request.GET.get('copy')).first()
+        if food_record and request.user == food_record.creator:
+            if food_record.amount_of_measurements:
+                form = FoodRecordForm(initial={'patient_id': food_record.patient_id, 'datetime': food_record.datetime, 'product': food_record.product, 'eenheid': food_record.measurement, 'aantal_eenheden': food_record.amount_of_measurements})
+            else:
+                form = FoodRecordForm(initial={'product': food_record.product, 'eenheid': food_record.measurement, 'aantal_eenheden': food_record.amount / food_record.measurement.amount})
+        else:
+            form = FoodRecordForm()
+
+    elif request.method == 'POST':
         if request.POST.get('update_eenheden'):
             update_time = convert_time(request.POST.get('update_datetime'))
             update_value = convert_float(request.POST.get('update_eenheden').replace(",", "."))
