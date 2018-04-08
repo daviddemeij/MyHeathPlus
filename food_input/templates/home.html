@@ -61,11 +61,15 @@
                         <tr>
                             <td>{{ food_record.patient_id }}</td>
                             <td>{{ food_record.datetime.date }}</td>
-                            <td> <input onchange="this.form.submit()" size="4" class="form-inline" name="update_datetime" step="any" required="" value="{{ food_record.datetime.time }}">
-
+                            <td><input onchange="this.form.submit()" size="4" class="form-inline" name="update_datetime" step="any" required="" value="{{ food_record.datetime.time }}"></td>
+                            <td>
+                                {{ food_record.product.fabrikantnaam }}
+                                {% if food_record.display_name %}
+                                    {{ food_record.display_name.name }}
+                                {% else %}
+                                    {{ food_record.product.product_omschrijving }}
+                                {% endif %}
                             </td>
-                            <td>{{ food_record.product.fabrikantnaam }} {{ food_record.product.product_omschrijving }}</td>
-
                             {% if food_record.measurement and food_record.measurement.name != "gram" %}
                             <td><input onchange="this.form.submit()" size="3" class="form-inline" name="update_eenheden" step="any" required="" value="{{ food_record.amount_of_measurements }}"> {{ food_record.measurement.name }} ({{ food_record.amount|floatformat }} gram)</td>
                             {% else %}
