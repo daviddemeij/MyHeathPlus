@@ -37,23 +37,24 @@ def count(request):
 def home(request):
     if request.method == 'GET' and convert_int(request.GET.get('copy')):
         food_record = FoodRecord.objects.filter(id=request.GET.get('copy')).first()
+        initial_data = {}
         if food_record and request.user == food_record.creator:
-            if food_record.measurement:
-                if food_record.amount_of_measurements:
-                    form = FoodRecordForm(initial={'patient_id': food_record.patient_id,
-                                                   'product': food_record.product, 'eenheid': food_record.measurement,
-                                                   'aantal_eenheden': food_record.amount_of_measurements})
-                else:
-                    form = FoodRecordForm(initial={'patient_id': food_record.patient_id,
-                                                   'product': food_record.product, 'eenheid': food_record.measurement,
-                                                   'aantal_eenheden': food_record.amount / food_record.measurement.amount})
+            initial_data['patient_id'] = food_record.patient_id
+            if food_record.display_name:
+                initial_data['display_name'] = food_record.display_name
             else:
-                measurement = Measurement.objects.filter(name="gram").first()
-                form = FoodRecordForm(initial={'patient_id': food_record.patient_id,
-                                               'product': food_record.product, 'eenheid': measurement,
-                                               'aantal_eenheden': food_record.amount})
-        else:
-            form = FoodRecordForm()
+                initial_data['display_name'] = DisplayName.objects.filter(product=food_record.product).first()
+
+            if food_record.measurement:
+                initial_data['eenheid'] = food_record.measurement
+                if food_record.amount_of_measurements:
+                    initial_data['aantal_eenheden'] = food_record.amount_of_measurements
+                else:
+                    initial_data['aantal_eenheden'] = food_record.amount / food_record.measurement.amount
+            else:
+                initial_data['eenheid'] = Measurement.objects.filter(name="gram").first()
+                initial_data['aantal_eenheden'] = food_record.amount
+        form = FoodRecordForm(initial=initial_data)
 
     elif request.method == 'POST':
         if request.POST.get('update_eenheden'):
