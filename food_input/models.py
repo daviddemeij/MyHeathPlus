@@ -186,8 +186,6 @@ class DisplayName(models.Model):
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     name = models.TextField()
 
-    class Meta:
-        unique_together = ('product', 'name')
 # Create your models here.
 class FoodRecord(models.Model):
     patient_id = models.IntegerField()
