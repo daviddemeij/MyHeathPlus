@@ -35,30 +35,6 @@ def count(request):
 
 @login_required
 def home(request):
-    '''
-    products = Product.objects.all()
-    for product in products:
-        name = product.product_omschrijving
-        if ("- " in name and "- en" not in name):
-            pos1 = name.find(" ")
-            pos2 = name.find("- ")
-
-            name = name[pos1+1].upper()+name[pos1+2:pos2]+name[:pos1].lower()+name[pos2+1:]
-        elif name[-1] == "-":
-            pos1 = name.find(" ")
-            name2 = name[pos1+1].upper()+name[pos1+2:-1]+name[:pos1].lower()
-            print(name, " => ", name2)
-            name = name2
-        display_name = DisplayName.objects.filter(product=product).first()
-
-
-        if display_name:
-            display_name.name = name
-        else:
-            display_name = DisplayName.objects.create(product=product, name=name)
-        display_name.save()
-    '''
-
     if request.method == 'GET' and convert_int(request.GET.get('copy')):
         food_record = FoodRecord.objects.filter(id=request.GET.get('copy')).first()
         if food_record and request.user == food_record.creator:
