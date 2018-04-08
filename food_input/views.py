@@ -38,10 +38,20 @@ def home(request):
     if request.method == 'GET' and convert_int(request.GET.get('copy')):
         food_record = FoodRecord.objects.filter(id=request.GET.get('copy')).first()
         if food_record and request.user == food_record.creator:
-            if food_record.amount_of_measurements:
-                form = FoodRecordForm(initial={'patient_id': food_record.patient_id, 'datetime': food_record.datetime, 'product': food_record.product, 'eenheid': food_record.measurement, 'aantal_eenheden': food_record.amount_of_measurements})
+            if food_record.measurement:
+                if food_record.amount_of_measurements:
+                    form = FoodRecordForm(initial={'patient_id': food_record.patient_id, 'datetime': food_record.datetime,
+                                                   'product': food_record.product, 'eenheid': food_record.measurement,
+                                                   'aantal_eenheden': food_record.amount_of_measurements})
+                else:
+                    form = FoodRecordForm(initial={'patient_id': food_record.patient_id, 'datetime': food_record.datetime,
+                                                   'product': food_record.product, 'eenheid': food_record.measurement,
+                                                   'aantal_eenheden': food_record.amount / food_record.measurement.amount})
             else:
-                form = FoodRecordForm(initial={'product': food_record.product, 'eenheid': food_record.measurement, 'aantal_eenheden': food_record.amount / food_record.measurement.amount})
+                measurement = Measurement.objects.filter(name="gram").first()
+                form = FoodRecordForm(initial={'patient_id': food_record.patient_id, 'datetime': food_record.datetime,
+                                               'product': food_record.product, 'eenheid': measurement,
+                                               'aantal_eenheden': food_record.amount})
         else:
             form = FoodRecordForm()
 
