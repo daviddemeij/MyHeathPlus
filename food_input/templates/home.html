@@ -11,7 +11,7 @@
     {% for field in form.visible_fields %}
       {% if field.id_for_label == "id_koppel_eenheid_aan_alle_producten_binnen_deze_categorie" %}
        <label for="{{ field.id_for_label }}">{{ field.label }}</label>: {{ field }}
-      {% else %}
+        {% else %}
           <div class="mb-3">
               <div class="form-group">
                 <label for='{{ field.id_for_label }}'>{{ field.label }}</label>
@@ -22,7 +22,24 @@
               </div>
           </div>
       {% endif %}
+      {% if field.label == "Product" %}
+            <div class="mb-3">
+                <div class="form-group">
+                    <label for="use_different_name">Gebruik een andere naam voor dit product</label>
+                    <input id="id_use_different_name" name="use_different_name" type="checkbox" onchange="$('#myId').toggleClass('hidden');">
+                </div>
+            </div>
+            <div id="myId" class="hidden">
+                <div class="mv-3">
+                    <div class="form-group">
+                      <label for="different_name">Alternatieve Productnaam</label>
+                      <input id="id_different_name" name="different_name" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+      {% endif %}
     {% endfor %}
+
 
     <div class="form-group">
       <button type="submit" class="btn btn-success">
