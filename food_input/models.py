@@ -182,6 +182,7 @@ class Measurement(models.Model):
         return str(self.name) + " (" + str(self.amount) + " gram)"
 
 class DisplayName(models.Model):
+    id = models.IntegerField(blank=True, null=False, primary_key=True)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     name = models.TextField(unique=True)
 
