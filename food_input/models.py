@@ -184,8 +184,10 @@ class Measurement(models.Model):
 class DisplayName(models.Model):
     id = models.IntegerField(blank=True, null=False, primary_key=True)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
-    name = models.TextField(unique=True)
+    name = models.TextField()
 
+    class Meta:
+        unique_together = ('product', 'name')
 # Create your models here.
 class FoodRecord(models.Model):
     patient_id = models.IntegerField()
