@@ -187,8 +187,8 @@ class MeasurementAutocomplete(autocomplete.Select2QuerySetView):
             return Measurement.objects.none()
 
         qs = Measurement.objects.all()
-
-        product = self.forwarded.get('product')
+        display_name = DisplayName.objects.get(pk=self.forwarded.get('display_name'))
+        product = display_name.product
 
         if self.q:
             qs = qs.filter(name__icontains=self.q)
