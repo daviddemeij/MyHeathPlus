@@ -18,7 +18,8 @@ class MeasurementAdmin(admin.ModelAdmin):
 
 @admin.register(DisplayName)
 class DisplayNameAdmin(admin.ModelAdmin):
-    list_display = ('id', 'product', 'name')
+    list_display = ('id', 'product', 'name', 'creator', 'created_at')
+    list_filter = ('creator', 'product__productgroep_oms')
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
