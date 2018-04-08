@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import FoodRecordForm
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required
-from .models import FoodRecord, Measurement, Product
+from .models import FoodRecord, Measurement, Product, DisplayName
 from collections import defaultdict
 from .actions import count_occurrence
 import datetime
@@ -35,6 +35,30 @@ def count(request):
 
 @login_required
 def home(request):
+    '''
+    products = Product.objects.all()
+    for product in products:
+        name = product.product_omschrijving
+        if ("- " in name and "- en" not in name):
+            pos1 = name.find(" ")
+            pos2 = name.find("- ")
+
+            name = name[pos1+1].upper()+name[pos1+2:pos2]+name[:pos1].lower()+name[pos2+1:]
+        elif name[-1] == "-":
+            pos1 = name.find(" ")
+            name2 = name[pos1+1].upper()+name[pos1+2:-1]+name[:pos1].lower()
+            print(name, " => ", name2)
+            name = name2
+        display_name = DisplayName.objects.filter(product=product).first()
+
+
+        if display_name:
+            display_name.name = name
+        else:
+            display_name = DisplayName.objects.create(product=product, name=name)
+        display_name.save()
+    '''
+
     if request.method == 'GET' and convert_int(request.GET.get('copy')):
         food_record = FoodRecord.objects.filter(id=request.GET.get('copy')).first()
         if food_record and request.user == food_record.creator:
@@ -76,26 +100,29 @@ def home(request):
         else:
             form = FoodRecordForm(request.POST)
 
-            # Link productgroup to measurement unit
-            link_measurement = request.POST.get('koppel_eenheid_aan_alle_producten_binnen_deze_categorie')
-            category = Product.objects.get(pk=request.POST.get('product')).productgroep_oms
-            eenheid = Measurement.objects.get(pk=request.POST.get("eenheid"))
-            if link_measurement and category != "<geen categorie>" and eenheid:
-                print("adding \"" + str(eenheid) + "\" to product group: " + category)
-                form.add_error('eenheid', "\"" + str(eenheid) + "\" succesvol gekoppeld aan productcategorie: " + category)
-                products = Product.objects.all().filter(productgroep_oms=category)
-                linked_products = eenheid.linked_product.all()
-                for product in products:
-                    if product not in linked_products:
-                        eenheid.linked_product.add(product)
-
             # Process form
             if form.is_valid():
                 eenheid = Measurement.objects.get(pk=request.POST.get("eenheid"))
                 instance = form.save(commit=False)
                 instance.amount = float(request.POST.get("aantal_eenheden")) * eenheid.amount
                 instance.measurement = eenheid
+                instance.product = DisplayName.objects.get(pk=request.POST.get("display_name")).product
                 instance.amount_of_measurements = float(request.POST.get("aantal_eenheden"))
+
+                # Link productgroup to measurement unit
+                link_measurement = request.POST.get('koppel_eenheid_aan_alle_producten_binnen_deze_categorie')
+                category = instance.product.productgroep_oms
+
+                if link_measurement and category != "<geen categorie>" and eenheid:
+                    print("adding \"" + str(eenheid) + "\" to product group: " + category)
+                    form.add_error('eenheid',
+                                   "\"" + str(eenheid) + "\" succesvol gekoppeld aan productcategorie: " + category)
+                    products = Product.objects.all().filter(productgroep_oms=category)
+                    linked_products = eenheid.linked_product.all()
+                    for product in products:
+                        if product not in linked_products:
+                            eenheid.linked_product.add(product)
+
 
                 if instance.product not in eenheid.linked_product.all():
                     eenheid.linked_product.add(instance.product)
@@ -165,17 +192,17 @@ class ProductAutocomplete(autocomplete.Select2QuerySetView):
         if not self.request.user.is_authenticated:
             return Product.objects.none()
 
-        qs = Product.objects.all()
+        qs = DisplayName.objects.all()
 
         category = self.forwarded.get('categorie', None)
 
         if category and category != "<geen categorie>":
-            qs = qs.filter(productgroep_oms=category)
+            qs = qs.filter(product__productgroep_oms=category)
 
         if self.q:
-            qs = qs.filter(product_omschrijving__icontains=self.q) | qs.filter(fabrikantnaam__icontains=self.q)
+            qs = qs.filter(name__icontains=self.q) | qs.filter(product__fabrikantnaam__icontains=self.q)
 
-        return qs.order_by('-occurrence')
+        return qs.order_by('-product__occurrence')
 
 class MeasurementAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
