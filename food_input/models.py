@@ -181,6 +181,9 @@ class Measurement(models.Model):
     def __str__(self):
         return str(self.name) + " (" + str(self.amount) + " gram)"
 
+class DisplayName(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    name = models.TextField(unique=True)
 
 # Create your models here.
 class FoodRecord(models.Model):
