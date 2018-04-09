@@ -70,6 +70,7 @@
                  <th scope="col">Eiwit</th>
                  <th scope="col">Vet</th>
                  <th scope="col">Delete<br>Copy</th>
+                 <th scope="col">Creator</th>
 
              </tr>
          </thead>
@@ -107,6 +108,7 @@
                             <td>{{food_record.field_03001|floatformat}}</td>
                             <td><a href="/{{food_record.id}}"><span class="glyphicon glyphicon-remove"></span></a>
                             <a href="?copy={{food_record.id}}"><span class="glyphicon glyphicon-duplicate"></span></a></td>
+                            <td>{{ food_record.creator }}</td>
                          </tr>
                     </form>
                 {% endfor %}
