@@ -1,7 +1,7 @@
 from django import forms
 from .models import FoodRecord, Product, Measurement
 from dal import autocomplete
-from datetimewidget.widgets import DateTimeWidget
+from datetimewidget.widgets import DateWidget, TimeWidget
 from django.utils.translation import ugettext_lazy as _
 
 CATEGORIES = (("<geen categorie>", "<geen categorie>"),
@@ -38,15 +38,20 @@ class FoodRecordForm(forms.ModelForm):
     )
     koppel_eenheid_aan_alle_producten_binnen_deze_categorie = forms.BooleanField(required=False)
     aantal_eenheden = forms.FloatField()
+    datum = forms.DateField(
+        widget=DateWidget(attrs={'id': "id_datum"}, usel10n=True, bootstrap_version=3)
+    )
+    tijd = forms.TimeField(
+        widget=TimeWidget(attrs={'id': "id_tijd"}, usel10n=False, bootstrap_version=3, options={'format': 'hh:ii'})
+    )
     class Meta:
         model = FoodRecord
-        fields = ['patient_id', 'datetime', 'categorie', 'display_name', 'eenheid', 'koppel_eenheid_aan_alle_producten_binnen_deze_categorie', 'aantal_eenheden']
+        fields = ['patient_id', 'datum', 'tijd', 'categorie', 'display_name', 'eenheid', 'koppel_eenheid_aan_alle_producten_binnen_deze_categorie', 'aantal_eenheden']
         widgets = {
             'display_name': autocomplete.ModelSelect2(url='product-autocomplete', forward=['categorie']),
-            'datetime': DateTimeWidget(attrs={'id': "id_datetime"}, usel10n=True, bootstrap_version=3)
+
         }
         labels = {'patient_id': _('Patient ID'),
-                  'datetime': _('Datum & tijd'),
                   'amount': _('Hoeveelheid (gram)'),
                   'display_name': _('Product')}
 
