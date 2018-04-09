@@ -8,11 +8,11 @@
 
   <form method="post">
     {% csrf_token %}
+    <div class="mb-3">
     {% for field in form.visible_fields %}
       {% if field.id_for_label == "id_koppel_eenheid_aan_alle_producten_binnen_deze_categorie" %}
        <label for="{{ field.id_for_label }}">{{ field.label }}</label>: {{ field }}
         {% else %}
-          <div class="mb-3">
               <div class="form-group">
                 <label for='{{ field.id_for_label }}'>{{ field.label }}</label>
                 {{ field|add_class:'form-control' }}
@@ -20,15 +20,13 @@
                   <span class="help-block">{{ error }}</span>
                 {% endfor %}
               </div>
-          </div>
       {% endif %}
       {% if field.label == "Product" %}
-            <div class="mb-3">
+
                 <div class="form-group">
                     <label for="use_different_name">Gebruik een andere naam voor dit product</label>
                     <input id="id_use_different_name" name="use_different_name" type="checkbox" onchange="$('#myId').toggleClass('hidden');">
                 </div>
-            </div>
             <div id="myId" class="hidden">
                 <div class="mv-3">
                     <div class="form-group">
@@ -39,6 +37,7 @@
             </div>
       {% endif %}
     {% endfor %}
+        </div>
 
 
     <div class="form-group">
@@ -47,8 +46,17 @@
       </button>
     </div>
     </form>
-
-
+    <form method="get">
+<div class="form-group">
+    <label for="id_select_patient">Geselecteerde patiënt</label>
+    <select onchange="this.form.submit()" name="select_patient" class="form-control" id="id_categorie">
+        {% for patient in patient_list %}
+             <option {% ifequal selected_patient patient.patient_id %} selected {% endifequal %}
+                     value="{{ patient.patient_id }}">{{ patient.patient_id }}</option>
+        {% endfor %}
+    </select>
+</div>
+        </form>
      <table class="table">
          <thead class="thead-light">
              <tr>

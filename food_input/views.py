@@ -35,6 +35,7 @@ def count(request):
 
 @login_required
 def home(request):
+    selected_patient = FoodRecord.objects.filter(creator=request.user).order_by('-created_at').first().patient_id
     if request.method == 'GET' and convert_int(request.GET.get('copy')):
         food_record = FoodRecord.objects.filter(id=request.GET.get('copy')).first()
         initial_data = {}
@@ -76,7 +77,8 @@ def home(request):
             form = FoodRecordForm()
         else:
             form = FoodRecordForm(request.POST)
-
+            print("request ", request.POST.get('patient_id'))
+            selected_patient = request.POST.get('patient_id')
             # Process form
             if form.is_valid():
                 eenheid = Measurement.objects.get(pk=request.POST.get("eenheid"))
@@ -85,6 +87,12 @@ def home(request):
                 instance.measurement = eenheid
                 instance.product = DisplayName.objects.get(pk=request.POST.get("display_name")).product
                 instance.amount_of_measurements = float(request.POST.get("aantal_eenheden"))
+                print(request.POST.get('tijd'))
+                date = datetime.datetime.strptime(request.POST.get('datum'), '%Y-%m-%d')
+                time = datetime.datetime.strptime(request.POST.get('tijd'), '%H:%M')
+                print(time.hour, time.minute)
+                instance.datetime = date.replace(hour=time.hour, minute=time.minute)
+
 
                 # Link productgroup to measurement unit
                 link_measurement = request.POST.get('koppel_eenheid_aan_alle_producten_binnen_deze_categorie')
@@ -139,7 +147,11 @@ def home(request):
                 print("input is not valid!")
     else:
         form = FoodRecordForm()
-    food_records = FoodRecord.objects.filter(creator=request.user).order_by('datetime')
+
+    if request.method == 'GET' and convert_int(request.GET.get('select_patient')):
+        selected_patient = convert_int(request.GET.get('select_patient'))
+
+    food_records = FoodRecord.objects.filter(patient_id=selected_patient).order_by('datetime')
     food_records_grouped = defaultdict(defaultdict)
     for food_record in food_records:
         date = food_record.datetime.date()
@@ -159,8 +171,9 @@ def home(request):
                 food_records_grouped[date]['Avond'].append(food_record)
             else:
                 food_records_grouped[date]['Avond'] = [food_record]
-
-    return render(request, 'home.html', {'form': form, 'food_records_grouped': dict(food_records_grouped)})
+    patient_list = FoodRecord.objects.all().values("patient_id").distinct()
+    return render(request, 'home.html', {'form': form, 'food_records_grouped': dict(food_records_grouped),
+                                         'patient_list': patient_list, 'selected_patient': selected_patient})
 
 @login_required
 def delete_record(request, id):
