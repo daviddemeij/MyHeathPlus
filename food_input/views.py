@@ -42,7 +42,7 @@ def home(request):
         if food_record:
             initial_data['patient_id'] = food_record.patient_id
             selected_patient = food_record.patient_id
-            
+
             if food_record.display_name:
                 initial_data['display_name'] = food_record.display_name
             else:
@@ -212,10 +212,12 @@ class MeasurementAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return Measurement.objects.none()
-
+        product = False
         qs = Measurement.objects.all()
-        display_name = DisplayName.objects.get(pk=self.forwarded.get('display_name'))
-        product = display_name.product
+        if self.forwarded.get('display_name'):
+            display_name = DisplayName.objects.get(pk=self.forwarded.get('display_name'))
+            product = display_name.product
+            print(product)
 
         if self.q:
             qs = qs.filter(name__icontains=self.q)
