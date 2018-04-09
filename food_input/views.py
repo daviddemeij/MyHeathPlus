@@ -39,7 +39,7 @@ def home(request):
     if request.method == 'GET' and convert_int(request.GET.get('copy')):
         food_record = FoodRecord.objects.filter(id=request.GET.get('copy')).first()
         initial_data = {}
-        if food_record and request.user == food_record.creator:
+        if food_record:
             initial_data['patient_id'] = food_record.patient_id
             if food_record.display_name:
                 initial_data['display_name'] = food_record.display_name
