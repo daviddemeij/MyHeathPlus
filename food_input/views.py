@@ -41,6 +41,8 @@ def home(request):
         initial_data = {}
         if food_record:
             initial_data['patient_id'] = food_record.patient_id
+            selected_patient = food_record.patient_id
+            
             if food_record.display_name:
                 initial_data['display_name'] = food_record.display_name
             else:
