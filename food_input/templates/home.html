@@ -11,7 +11,11 @@
     <div class="mb-3">
     {% for field in form.visible_fields %}
       {% if field.id_for_label == "id_koppel_eenheid_aan_alle_producten_binnen_deze_categorie" %}
-       <label for="{{ field.id_for_label }}">{{ field.label }}</label>: {{ field }}
+            {% if user.is_staff %}
+           <label for="{{ field.id_for_label }}">{{ field.label }}</label>: {{ field }}
+            {% endif %}
+        {% elif field.label == "Patient ID" and not user.is_staff %}
+            <input type="hidden" name="{{ field.name }}" required_id="{{ field.id_for_label }}" value="{{ user.get_username }}">
         {% else %}
               <div class="form-group">
                 <label for='{{ field.id_for_label }}'>{{ field.label }}</label>
@@ -21,8 +25,7 @@
                 {% endfor %}
               </div>
       {% endif %}
-      {% if field.label == "Product" %}
-
+      {% if field.label == "Product" and user.is_staff %}
                 <div class="form-group">
                     <label for="use_different_name">Gebruik een andere naam voor dit product</label>
                     <input id="id_use_different_name" name="use_different_name" type="checkbox" onchange="$('#myId').toggleClass('hidden');">
@@ -46,6 +49,7 @@
       </button>
     </div>
     </form>
+    {% if user.is_staff %}
     <form method="get">
 <div class="form-group">
     <label for="id_select_patient">Geselecteerde patiënt</label>
@@ -57,10 +61,11 @@
     </select>
 </div>
         </form>
+    {% endif %}
      <table class="table">
          <thead class="thead-light">
              <tr>
-                 <th scope="col">Patient</th>
+                 {% if user.is_staff %}<th scope="col">Patient</th>{% endif %}
                  <th scope="col">Datum</th>
                  <th scope="col">Tijd</th>
                  <th scope="col">Product</th>
@@ -70,7 +75,7 @@
                  <th scope="col">Eiwit</th>
                  <th scope="col">Vet</th>
                  <th scope="col">Delete<br>Copy</th>
-                 <th scope="col">Creator</th>
+                 {% if user.is_staff %}<th scope="col">Creator</th>{% endif %}
 
              </tr>
          </thead>
@@ -85,7 +90,7 @@
                         {% csrf_token %}
                         <input type="hidden" name="food_record_id" value="{{ food_record.id }}">
                         <tr>
-                            <td>{{ food_record.patient_id }}</td>
+                            {% if user.is_staff %}<td>{{ food_record.patient_id }}</td>{% endif %}
                             <td>{{ food_record.datetime.date }}</td>
                             <td><input onchange="this.form.submit()" size="4" class="form-inline" name="update_datetime" step="any" required="" value="{{ food_record.datetime.time }}"></td>
                             <td>
@@ -108,7 +113,7 @@
                             <td>{{food_record.field_03001|floatformat}}</td>
                             <td><a href="/{{food_record.id}}"><span class="glyphicon glyphicon-remove"></span></a>
                             <a href="?copy={{food_record.id}}"><span class="glyphicon glyphicon-duplicate"></span></a></td>
-                            <td>{{ food_record.creator }}</td>
+                            {% if user.is_staff %}<td>{{ food_record.creator }}</td>{% endif %}
                          </tr>
                     </form>
                 {% endfor %}
