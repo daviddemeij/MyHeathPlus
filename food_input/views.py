@@ -35,7 +35,11 @@ def count(request):
 
 @login_required
 def home(request):
-    selected_patient = FoodRecord.objects.filter(creator=request.user).order_by('-created_at').first().patient_id
+    selected_patient = 0
+    created_food_records = FoodRecord.objects.filter(creator=request.user).order_by('-created_at')
+    if created_food_records:
+        selected_patient = created_food_records.first().patient_id
+
     if request.method == 'GET' and convert_int(request.GET.get('copy')):
         food_record = FoodRecord.objects.filter(id=request.GET.get('copy')).first()
         initial_data = {}
@@ -79,7 +83,6 @@ def home(request):
             form = FoodRecordForm()
         else:
             form = FoodRecordForm(request.POST)
-            print("request ", request.POST.get('patient_id'))
             selected_patient = request.POST.get('patient_id')
             # Process form
             if form.is_valid():
@@ -89,10 +92,8 @@ def home(request):
                 instance.measurement = eenheid
                 instance.product = DisplayName.objects.get(pk=request.POST.get("display_name")).product
                 instance.amount_of_measurements = float(request.POST.get("aantal_eenheden"))
-                print(request.POST.get('tijd'))
                 date = datetime.datetime.strptime(request.POST.get('datum'), '%Y-%m-%d')
                 time = datetime.datetime.strptime(request.POST.get('tijd'), '%H:%M')
-                print(time.hour, time.minute)
                 instance.datetime = date.replace(hour=time.hour, minute=time.minute)
 
 
@@ -100,7 +101,7 @@ def home(request):
                 link_measurement = request.POST.get('koppel_eenheid_aan_alle_producten_binnen_deze_categorie')
                 category = instance.product.productgroep_oms
 
-                if link_measurement and category != "<geen categorie>" and eenheid:
+                if request.user.is_staff and link_measurement and category != "<geen categorie>" and eenheid:
                     print("adding \"" + str(eenheid) + "\" to product group: " + category)
                     form.add_error('eenheid',
                                    "\"" + str(eenheid) + "\" succesvol gekoppeld aan productcategorie: " + category)
@@ -110,7 +111,7 @@ def home(request):
                         if product not in linked_products:
                             eenheid.linked_product.add(product)
 
-                if request.POST.get('use_different_name'):
+                if request.user.is_staff and request.POST.get('use_different_name'):
                     if request.POST.get('different_name'):
                         display_name = DisplayName.objects.create(name=request.POST.get('different_name'),
                                                                   product=instance.product,
@@ -122,7 +123,7 @@ def home(request):
                         request.POST._mutable = mutable
                         FoodRecordForm(request.POST)
 
-                if instance.product not in eenheid.linked_product.all():
+                if instance.product not in eenheid.linked_product.all() and request.user.is_staff:
                     eenheid.linked_product.add(instance.product)
                     form.add_error('eenheid',
                                    "\"" + str(eenheid) + "\" is nu gekoppeld aan: " + str(instance.product))
@@ -150,10 +151,14 @@ def home(request):
     else:
         form = FoodRecordForm()
 
-    if request.method == 'GET' and convert_int(request.GET.get('select_patient')):
+    if request.user.is_staff and request.method == 'GET' and convert_int(request.GET.get('select_patient')):
         selected_patient = convert_int(request.GET.get('select_patient'))
 
-    food_records = FoodRecord.objects.filter(patient_id=selected_patient).order_by('datetime')
+    if not request.user.is_staff:
+        food_records = FoodRecord.objects.filter(creator=request.user).order_by('datetime')
+    else:
+        food_records = FoodRecord.objects.filter(patient_id=selected_patient).order_by('datetime')
+
     food_records_grouped = defaultdict(defaultdict)
     for food_record in food_records:
         date = food_record.datetime.date()
@@ -173,7 +178,9 @@ def home(request):
                 food_records_grouped[date]['Avond'].append(food_record)
             else:
                 food_records_grouped[date]['Avond'] = [food_record]
+
     patient_list = FoodRecord.objects.all().values("patient_id").distinct()
+
     return render(request, 'home.html', {'form': form, 'food_records_grouped': dict(food_records_grouped),
                                          'patient_list': patient_list, 'selected_patient': selected_patient})
 
@@ -187,6 +194,8 @@ def delete_record(request, id):
                 product.occurrence -= 1
                 product.save()
             record.delete()
+        else:
+            print(record.creator, request.user)
     return redirect('/')
 
 
