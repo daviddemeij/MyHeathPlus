@@ -41,7 +41,7 @@ def count_occurrence():
             product.occurrence = occurrence
             product.save()
         occurrence_list.append((product.product_omschrijving, occurrence))
-    return occurrence_list
+    return sorted(occurrence_list, key=lambda tuple: tuple[1], reverse=True)
 
 def reset_display_names():
     for display_name in DisplayName.objects.all():
