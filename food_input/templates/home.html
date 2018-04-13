@@ -66,7 +66,6 @@
          <thead class="thead-light">
              <tr>
                  {% if user.is_staff %}<th scope="col">Patient</th>{% endif %}
-                 <th scope="col">Datum</th>
                  <th scope="col">Tijd</th>
                  <th scope="col">Product</th>
                  <th scope="col">Hoeveelheid</th>
@@ -91,7 +90,6 @@
                         <input type="hidden" name="food_record_id" value="{{ food_record.id }}">
                         <tr>
                             {% if user.is_staff %}<td>{{ food_record.patient_id }}</td>{% endif %}
-                            <td>{{ food_record.datetime.date }}</td>
                             <td><input onchange="this.form.submit()" size="4" class="form-inline" name="update_datetime" step="any" required="" value="{{ food_record.datetime.time }}"></td>
                             <td>
                                 {{ food_record.product.fabrikantnaam }}
@@ -101,7 +99,7 @@
                                     {{ food_record.product.product_omschrijving }}
                                 {% endif %}
                             </td>
-                            {% if food_record.measurement and food_record.measurement.name != "gram" %}
+                            {% if food_record.measurement and food_record.measurement.name != "gram" and food_record.amount_of_measurements %}
                             <td><input onchange="this.form.submit()" size="3" class="form-inline" name="update_eenheden" step="any" required="" value="{{ food_record.amount_of_measurements }}"> {{ food_record.measurement.name }} ({{ food_record.amount|floatformat }} gram)</td>
                             {% else %}
                             <td><input onchange="this.form.submit()" size="3" class="form-inline" name="update_eenheden" step="any" required="" value="{{ food_record.amount }}"> gram</td>
