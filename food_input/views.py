@@ -155,9 +155,9 @@ def home(request):
         selected_patient = convert_int(request.GET.get('select_patient'))
 
     if not request.user.is_staff:
-        food_records = FoodRecord.objects.filter(creator=request.user).order_by('datetime')
+        food_records = FoodRecord.objects.filter(creator=request.user).order_by('-datetime')
     else:
-        food_records = FoodRecord.objects.filter(patient_id=selected_patient).order_by('datetime')
+        food_records = FoodRecord.objects.filter(patient_id=selected_patient).order_by('-datetime')
 
     food_records_grouped = defaultdict(defaultdict)
     for food_record in food_records:
