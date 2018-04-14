@@ -39,10 +39,10 @@ class FoodRecordForm(forms.ModelForm):
     koppel_eenheid_aan_alle_producten_binnen_deze_categorie = forms.BooleanField(required=False)
     aantal_eenheden = forms.FloatField()
     datum = forms.DateField(
-        widget=DateWidget(attrs={'id': "id_datum"}, usel10n=True, bootstrap_version=3)
+        widget=DateWidget(attrs={'id': "id_datum", "autocomplete": "off"}, usel10n=True, bootstrap_version=3)
     )
     tijd = forms.TimeField(
-        widget=TimeWidget(attrs={'id': "id_tijd"}, usel10n=False, bootstrap_version=3, options={'format': 'hh:ii'})
+        widget=TimeWidget(attrs={'id': "id_tijd", "autocomplete": "off"}, usel10n=False, bootstrap_version=3, options={'format': 'hh:ii'})
     )
     class Meta:
         model = FoodRecord
