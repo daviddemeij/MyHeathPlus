@@ -2,65 +2,29 @@ from django.shortcuts import render, redirect
 from .forms import FoodRecordForm
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required
+
 from .models import FoodRecord, Measurement, Product, DisplayName
-from collections import defaultdict
-from .actions import count_occurrence
+from .actions import count_occurrence, convert_int, convert_float, convert_time, group_food_records, select_patient, \
+    copy_food_record, calculate_nutrition
 import datetime
 
-def convert_int(s):
-    try:
-        value = int(s)
-        return value
-    except:
-        return False
 
-def convert_float(s):
-    try:
-        value = float(s)
-        return value
-    except ValueError:
-        return False
-
-def convert_time(s):
-    try:
-        validtime = datetime.datetime.strptime(s, "%H:%M")
-        return validtime
-    except:
-        return False
 
 @login_required
 def count(request):
-    occurrence_list = count_occurrence()
-    return render(request, 'count.html', {'occurrence_list': occurrence_list})
+    if request.user.is_staff:
+        occurrence_list = count_occurrence()
+        return render(request, 'count.html', {'occurrence_list': occurrence_list})
+    else:
+        return redirect('/')
 
 @login_required
 def home(request):
-    selected_patient = 0
-    created_food_records = FoodRecord.objects.filter(creator=request.user).order_by('-created_at')
-    if created_food_records:
-        selected_patient = created_food_records.first().patient_id
 
     if request.method == 'GET' and convert_int(request.GET.get('copy')):
         food_record = FoodRecord.objects.filter(id=request.GET.get('copy')).first()
-        initial_data = {}
-        if food_record:
-            initial_data['patient_id'] = food_record.patient_id
-            selected_patient = food_record.patient_id
+        initial_data = copy_food_record(food_record)
 
-            if food_record.display_name:
-                initial_data['display_name'] = food_record.display_name
-            else:
-                initial_data['display_name'] = DisplayName.objects.filter(product=food_record.product).first()
-
-            if food_record.measurement:
-                initial_data['eenheid'] = food_record.measurement
-                if food_record.amount_of_measurements:
-                    initial_data['aantal_eenheden'] = food_record.amount_of_measurements
-                else:
-                    initial_data['aantal_eenheden'] = food_record.amount / food_record.measurement.amount
-            else:
-                initial_data['eenheid'] = Measurement.objects.filter(name="gram").first()
-                initial_data['aantal_eenheden'] = food_record.amount
         form = FoodRecordForm(initial=initial_data)
 
     elif request.method == 'POST':
@@ -83,8 +47,8 @@ def home(request):
             form = FoodRecordForm()
         else:
             form = FoodRecordForm(request.POST)
-            selected_patient = request.POST.get('patient_id')
             # Process form
+            print(form)
             if form.is_valid():
                 eenheid = Measurement.objects.get(pk=request.POST.get("eenheid"))
                 instance = form.save(commit=False)
@@ -128,15 +92,8 @@ def home(request):
                     form.add_error('eenheid',
                                    "\"" + str(eenheid) + "\" is nu gekoppeld aan: " + str(instance.product))
                 instance.creator = request.user
-                fields = [field.name for field in FoodRecord._meta.fields + FoodRecord._meta.many_to_many]
+                instance = calculate_nutrition(instance)
 
-                for field in fields:
-                    if field.startswith("field_"):
-                        nutrition_value = getattr(instance.product, field)
-                        if nutrition_value:
-                            if "sp" in nutrition_value:
-                                nutrition_value = 0.0
-                            setattr(instance, field, float(nutrition_value)*(instance.amount / float(instance.product.hoeveelheid)))
                 existing_object = FoodRecord.objects.filter(patient_id=instance.patient_id).filter(datetime=instance.datetime).filter(product=instance.product).filter(amount=instance.amount).first()
                 if existing_object:
                     print("foodrecord already exists")
@@ -151,33 +108,14 @@ def home(request):
     else:
         form = FoodRecordForm()
 
-    if request.user.is_staff and request.method == 'GET' and convert_int(request.GET.get('select_patient')):
-        selected_patient = convert_int(request.GET.get('select_patient'))
+    selected_patient = select_patient(request)
 
     if not request.user.is_staff:
         food_records = FoodRecord.objects.filter(creator=request.user).order_by('-datetime')
     else:
         food_records = FoodRecord.objects.filter(patient_id=selected_patient).order_by('-datetime')
 
-    food_records_grouped = defaultdict(defaultdict)
-    for food_record in food_records:
-        date = food_record.datetime.date()
-        hour = food_record.datetime.hour
-        if hour < 12:
-            if 'Ochtend' in food_records_grouped[date]:
-                food_records_grouped[date]['Ochtend'].append(food_record)
-            else:
-                food_records_grouped[date]['Ochtend'] = [food_record]
-        elif 12 <= hour < 17:
-            if 'Middag' in food_records_grouped[date]:
-                food_records_grouped[date]['Middag'].append(food_record)
-            else:
-                food_records_grouped[date]['Middag'] = [food_record]
-        else:
-            if 'Avond' in food_records_grouped[date]:
-                food_records_grouped[date]['Avond'].append(food_record)
-            else:
-                food_records_grouped[date]['Avond'] = [food_record]
+    food_records_grouped = group_food_records(food_records)
 
     patient_list = FoodRecord.objects.all().values("patient_id").distinct()
 
@@ -194,8 +132,6 @@ def delete_record(request, id):
                 product.occurrence -= 1
                 product.save()
             record.delete()
-        else:
-            print(record.creator, request.user)
     return redirect('/')
 
 
@@ -226,10 +162,10 @@ class MeasurementAutocomplete(autocomplete.Select2QuerySetView):
         if self.forwarded.get('display_name'):
             display_name = DisplayName.objects.get(pk=self.forwarded.get('display_name'))
             product = display_name.product
-            print(product)
 
         if self.q:
-            qs = qs.filter(name__icontains=self.q)
+            for s in self.q.split(" "):
+                qs = qs.filter(name__icontains=s) | qs.filter(amount__icontains=s)
         elif product:
             qs = qs.filter(linked_product=product)
         return qs.order_by('amount')
