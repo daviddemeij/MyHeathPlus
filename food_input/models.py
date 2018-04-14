@@ -203,8 +203,8 @@ class FoodRecord(models.Model):
     amount = models.FloatField()
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=False)
     created_at = models.DateTimeField(default=dt.datetime.now)
-    measurement = models.ForeignKey(Measurement, on_delete=models.SET_NULL, null=True, blank=False)
-    amount_of_measurements = models.FloatField(null=True, blank=True)
+    measurement = models.ForeignKey(Measurement, on_delete=models.PROTECT, blank=False)
+    amount_of_measurements = models.FloatField(blank=False)
 
     field_01001 = models.TextField(db_column='_01001', blank=True, null=True)  # Field renamed because it started with '_'.
     field_01002 = models.TextField(db_column='_01002', blank=True, null=True)  # Field renamed because it started with '_'.
