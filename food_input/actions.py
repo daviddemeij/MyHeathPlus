@@ -3,27 +3,6 @@ from django.http import HttpResponse
 from .models import Product, FoodRecord, DisplayName, Measurement
 from collections import defaultdict
 
-def fill_measurement():
-    gram = Measurement.objects.filter(name__icontains="gram").first()
-    food_records = FoodRecord.objects.all()
-    for food_record in food_records:
-        print("food record", food_record.id)
-        if food_record.measurement and not food_record.amount_of_measurements:
-            food_record.amount_of_measurements = food_record.amount / food_record.measurement.amount
-            print(" -- updating amount of measurements -- ")
-            print("measurement = ", food_record.measurement)
-            print("amount = ", food_record.amount)
-            print("amount of measurements => ", food_record.amount_of_measurements)
-            food_record.save()
-        elif not food_record.measurement:
-            print(" -- updating measurement -- ")
-            food_record.measurement = gram
-            food_record.amount_of_measurements = food_record.amount
-            print("amount = ", food_record.amount)
-            print("measurement =>", gram)
-            print("amount of measurements =>", food_record.amount_of_measurements)
-            food_record.save()
-
 def export_as_csv_action(description="Export selected objects as CSV file",
                          fields=None, exclude=None, header=True):
     """
