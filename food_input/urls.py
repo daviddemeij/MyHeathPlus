@@ -3,7 +3,7 @@ from django.urls import path
 from . import views
 from . import api
 from .actions import count_occurrence
-from rest_framework_jwt.views import obtain_jwt_token
+from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 print("Counting occurrence!")
 count_occurrence()
 
@@ -18,6 +18,7 @@ urlpatterns = [path('', views.home),
                path('count/', views.count),
                url('api/login/', obtain_jwt_token),
                url('api/register/', api.register),
+               url('api/refresh-token/', refresh_jwt_token),
                path('api/food_records/<int:id>/', api.food_record, name="food_record"),
                url('api/food_records/', api.food_record_list),
                url('api/measurements/', api.measurement_list),
