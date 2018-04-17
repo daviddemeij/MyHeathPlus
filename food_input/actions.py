@@ -91,21 +91,25 @@ def group_food_records(food_records):
     for food_record in food_records:
         date = food_record.datetime.date()
         hour = food_record.datetime.hour
-        if hour < 12:
-            if 'Ochtend' in food_records_grouped[date]:
-                food_records_grouped[date]['Ochtend'].append(food_record)
-            else:
-                food_records_grouped[date]['Ochtend'] = [food_record]
-        elif 12 <= hour < 17:
-            if 'Middag' in food_records_grouped[date]:
-                food_records_grouped[date]['Middag'].append(food_record)
-            else:
-                food_records_grouped[date]['Middag'] = [food_record]
+        if date in food_records_grouped:
+            food_records_grouped[date]['total']['field_01001'] += float(food_record.field_01001)
+            food_records_grouped[date]['total']['field_05001'] += float(food_record.field_05001)
+            food_records_grouped[date]['total']['field_02002'] += float(food_record.field_02002)
+            food_records_grouped[date]['total']['field_03001'] += float(food_record.field_03001)
         else:
-            if 'Avond' in food_records_grouped[date]:
-                food_records_grouped[date]['Avond'].append(food_record)
-            else:
-                food_records_grouped[date]['Avond'] = [food_record]
+            food_records_grouped[date] = {'Avond': [], 'Middag': [], 'Ochtend': [], 'total': {}}
+
+            food_records_grouped[date]['total']['field_01001'] = float(food_record.field_01001)
+            food_records_grouped[date]['total']['field_05001'] = float(food_record.field_05001)
+            food_records_grouped[date]['total']['field_02002'] = float(food_record.field_02002)
+            food_records_grouped[date]['total']['field_03001'] = float(food_record.field_03001)
+
+        if hour < 12:
+            food_records_grouped[date]['Ochtend'].append(food_record)
+        elif 12 <= hour < 17:
+            food_records_grouped[date]['Middag'].append(food_record)
+        else:
+            food_records_grouped[date]['Avond'].append(food_record)
     return food_records_grouped
 
 def select_patient(request):
