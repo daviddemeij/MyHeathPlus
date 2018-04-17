@@ -97,7 +97,10 @@ def group_food_records(food_records):
             food_records_grouped[date]['total']['field_02002'] += float(food_record.field_02002)
             food_records_grouped[date]['total']['field_03001'] += float(food_record.field_03001)
         else:
-            food_records_grouped[date] = {'Avond': [], 'Middag': [], 'Ochtend': [], 'total': OrderedDict()}
+            food_records_grouped[date]['Avond'] = []
+            food_records_grouped[date]['Middag'] = []
+            food_records_grouped[date]['Ochtend'] = []
+            food_records_grouped[date]['total'] = OrderedDict()
 
             food_records_grouped[date]['total']['field_01001'] = float(food_record.field_01001)
             food_records_grouped[date]['total']['field_05001'] = float(food_record.field_05001)
