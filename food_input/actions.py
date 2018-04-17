@@ -1,7 +1,7 @@
 import unicodecsv
 from django.http import HttpResponse
 from .models import Product, FoodRecord, DisplayName, Measurement
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 def export_as_csv_action(description="Export selected objects as CSV file",
                          fields=None, exclude=None, header=True):
@@ -87,7 +87,7 @@ def convert_time(s):
         return False
 
 def group_food_records(food_records):
-    food_records_grouped = defaultdict(defaultdict)
+    food_records_grouped = defaultdict(OrderedDict)
     for food_record in food_records:
         date = food_record.datetime.date()
         hour = food_record.datetime.hour
