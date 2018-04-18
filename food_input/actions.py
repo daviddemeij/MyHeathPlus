@@ -87,8 +87,8 @@ def convert_time(s):
         return False
 
 def group_food_records(food_records):
-    food_records_grouped = defaultdict(OrderedDict)
-    for food_record in food_records:
+    food_records_grouped = OrderedDict()
+    for food_record in food_records.order_by('-datetime'):
         date = food_record.datetime.date()
         hour = food_record.datetime.hour
         if date in food_records_grouped:
@@ -97,6 +97,7 @@ def group_food_records(food_records):
             food_records_grouped[date]['total']['field_02002'] += float(food_record.field_02002)
             food_records_grouped[date]['total']['field_03001'] += float(food_record.field_03001)
         else:
+            food_records_grouped[date] = OrderedDict()
             food_records_grouped[date]['Avond'] = []
             food_records_grouped[date]['Middag'] = []
             food_records_grouped[date]['Ochtend'] = []
@@ -132,8 +133,6 @@ def select_patient(request):
 def copy_food_record(food_record):
     initial_data = {}
     if food_record:
-        initial_data['patient_id'] = food_record.patient_id
-
         if food_record.display_name:
             initial_data['display_name'] = food_record.display_name
         else:

@@ -109,11 +109,12 @@ def home(request):
         form = FoodRecordForm()
 
     selected_patient = select_patient(request)
+    form.initial['patient_id'] = selected_patient
 
     if not request.user.is_staff:
-        food_records = FoodRecord.objects.filter(creator=request.user).order_by('-datetime')
+        food_records = FoodRecord.objects.filter(creator=request.user)
     else:
-        food_records = FoodRecord.objects.filter(patient_id=selected_patient).order_by('-datetime')
+        food_records = FoodRecord.objects.filter(patient_id=selected_patient)
 
     food_records_grouped = group_food_records(food_records)
 
