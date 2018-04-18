@@ -132,8 +132,6 @@ def select_patient(request):
 def copy_food_record(food_record):
     initial_data = {}
     if food_record:
-        initial_data['patient_id'] = food_record.patient_id
-
         if food_record.display_name:
             initial_data['display_name'] = food_record.display_name
         else:
