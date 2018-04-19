@@ -120,7 +120,7 @@ def home(request):
 
     patient_list = FoodRecord.objects.all().values("patient_id").distinct()
 
-    return render(request, 'home.html', {'form': form, 'food_records_grouped': dict(food_records_grouped),
+    return render(request, 'home.html', {'form': form, 'food_records_grouped': sorted(food_records_grouped.items(), reverse=True),
                                          'patient_list': patient_list, 'selected_patient': selected_patient})
 
 @login_required
