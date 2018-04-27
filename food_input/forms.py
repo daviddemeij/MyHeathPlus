@@ -59,3 +59,8 @@ class MeasurementForm(forms.ModelForm):
     class Meta:
         model = Measurement
         fields = ['name', 'amount', 'linked_product']
+
+class CopyMealForm(forms.Form):
+    copy_date = forms.DateField(
+        widget=DateWidget(attrs={'id': "copy_date", "autocomplete": "off"}, usel10n=True, bootstrap_version=3)
+    )
