@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import FoodRecordForm
+from .forms import FoodRecordForm, CopyMealForm
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required
 
@@ -44,6 +44,16 @@ def home(request):
                 if update_time:
                     food_record.datetime = food_record.datetime.replace(hour=update_time.hour, minute=update_time.minute)
                 food_record.save()
+            form = FoodRecordForm()
+        elif request.POST.get('copy_date'):
+            copy_date = datetime.datetime.strptime(request.POST.get('copy_date'), '%Y-%m-%d')
+            for food_record in request.POST.get('food_records').split(",")[:-1]:
+                record = FoodRecord.objects.get(pk=int(food_record))
+                record.pk = None
+                record.creator = request.user
+                record.datetime = record.datetime.replace(copy_date.year, copy_date.month, copy_date.day)
+                record.created_at = datetime.datetime.now()
+                record.save()
             form = FoodRecordForm()
         else:
             form = FoodRecordForm(request.POST)
@@ -120,7 +130,8 @@ def home(request):
 
     patient_list = FoodRecord.objects.all().values("patient_id").distinct()
 
-    return render(request, 'home.html', {'form': form, 'food_records_grouped': sorted(food_records_grouped.items(), reverse=True),
+    return render(request, 'home.html', {'form': form, 'copy_form': CopyMealForm(),
+                                         'food_records_grouped': sorted(food_records_grouped.items(), reverse=True),
                                          'patient_list': patient_list, 'selected_patient': selected_patient})
 
 @login_required

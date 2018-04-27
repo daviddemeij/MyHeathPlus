@@ -102,7 +102,33 @@
                         {% endfor %}
                     </tr>
                 {% else %}
-                    {% if food_records %}<tr><th></th><th colspan="9">{{ dagdeel }}</th></tr>{% endif %}
+                    {% if food_records %}
+                        <tr>
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="food_records" value="{% for food_record in food_records %}{{ food_record.id }},{% endfor %}">
+                                <th></th>
+                                <th colspan="9">
+                                    <div class="row">
+                                        <div class="col-sm-7 col-md-7 col-lg-7">
+                                            {{ dagdeel }}
+                                        </div>
+                                        <div class="col-sm-3 col-md-3 col-lg-3">
+                                            {{ copy_form.copy_date }}
+                                        </div>
+                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                            <button type="submit" class="btn btn-info">
+                                                <span class="glyphicon glyphicon-duplicate"></span>
+                                                Kopieer Maaltijd
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                </th>
+
+                            </form>
+                        </tr>
+                    {% endif %}
                     {% for food_record in food_records %}
                         <form method="post">
                             {% csrf_token %}
