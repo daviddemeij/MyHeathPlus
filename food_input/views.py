@@ -47,11 +47,12 @@ def home(request):
             form = FoodRecordForm()
         elif request.POST.get('copy_date'):
             copy_date = datetime.datetime.strptime(request.POST.get('copy_date'), '%Y-%m-%d')
+            time = datetime.datetime.strptime(request.POST.get('copy_time'), '%H:%M')
             for food_record in request.POST.get('food_records').split(",")[:-1]:
                 record = FoodRecord.objects.get(pk=int(food_record))
                 record.pk = None
                 record.creator = request.user
-                record.datetime = record.datetime.replace(copy_date.year, copy_date.month, copy_date.day)
+                record.datetime = copy_date.replace(hour=time.hour, minute=time.minute)
                 record.created_at = datetime.datetime.now()
                 record.save()
             form = FoodRecordForm()

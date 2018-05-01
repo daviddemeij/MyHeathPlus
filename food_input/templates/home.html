@@ -110,11 +110,21 @@
                                 <th></th>
                                 <th colspan="9">
                                     <div class="row">
-                                        <div class="col-sm-7 col-md-7 col-lg-7">
+                                        <div class="col-sm-5 col-md-5 col-lg-5">
                                             {{ dagdeel }}
                                         </div>
                                         <div class="col-sm-3 col-md-3 col-lg-3">
                                             {{ copy_form.copy_date }}
+                                        </div>
+                                        <div class="col-sm-1 col-md-1 col-lg-1">
+                                            {% with food_records|last as food_record %}
+                                                <input class="form-control" name="copy_time" step="any"
+                                                {% if food_record.datetime.hour < 5 %}
+                                                    value="{{ food_records.0.datetime.time }}" required >
+                                                {% else %}
+                                                    value="{{ food_record.datetime.time }}" required >
+                                                {% endif %}
+                                            {% endwith %}
                                         </div>
                                         <div class="col-sm-2 col-md-2 col-lg-2">
                                             <button type="submit" class="btn btn-info">
@@ -125,7 +135,6 @@
 
                                     </div>
                                 </th>
-
                             </form>
                         </tr>
                     {% endif %}
@@ -135,7 +144,7 @@
                             <input type="hidden" name="food_record_id" value="{{ food_record.id }}">
                             <tr>
                                 {% if user.is_staff %}<td>{{ food_record.patient_id }}</td>{% endif %}
-                                <td><input onchange="this.form.submit()" size="4" class="form-inline" name="update_datetime" step="any" required="" value="{{ food_record.datetime.time }}"></td>
+                                <td><input onchange="this.form.submit()" size="4" class="form-inline" name="update_datetime" step="any" required value="{{ food_record.datetime.time }}"></td>
                                 <td>
                                     {{ food_record.product.fabrikantnaam }}
                                     {% if food_record.display_name %}
@@ -145,15 +154,15 @@
                                     {% endif %}
                                 </td>
                                 {% if food_record.measurement and food_record.measurement.name != "gram" and food_record.amount_of_measurements %}
-                                <td><input onchange="this.form.submit()" size="3" class="form-inline" name="update_eenheden" step="any" required="" value="{{ food_record.amount_of_measurements }}"> {{ food_record.measurement.name }} ({{ food_record.amount|floatformat }} gram)</td>
+                                <td><input onchange="this.form.submit()" size="3" class="form-inline" name="update_eenheden" step="any" required value="{{ food_record.amount_of_measurements }}"> {{ food_record.measurement.name }} ({{ food_record.amount|floatformat }} gram)</td>
                                 {% else %}
-                                <td><input onchange="this.form.submit()" size="3" class="form-inline" name="update_eenheden" step="any" required="" value="{{ food_record.amount }}"> gram</td>
+                                <td><input onchange="this.form.submit()" size="3" class="form-inline" name="update_eenheden" step="any" required value="{{ food_record.amount }}"> gram</td>
                                 {% endif %}
 
                                 <td>{{ food_record.field_01001|floatformat }}</td>
                                 <td>{{ food_record.field_05001|floatformat }}</td>
-                                <td>{{food_record.field_02002|floatformat}}</td>
-                                <td>{{food_record.field_03001|floatformat}}</td>
+                                <td>{{ food_record.field_02002|floatformat }}</td>
+                                <td>{{ food_record.field_03001|floatformat }}</td>
                                 <td><a href="/{{food_record.id}}"><span class="glyphicon glyphicon-remove"></span></a>
                                 <a href="?copy={{food_record.id}}"><span class="glyphicon glyphicon-duplicate"></span></a></td>
                                 {% if user.is_staff %}<td>{{ food_record.creator }}</td>{% endif %}
