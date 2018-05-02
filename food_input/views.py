@@ -4,8 +4,8 @@ from dal import autocomplete
 from django.contrib.auth.decorators import login_required
 
 from .models import FoodRecord, Measurement, Product, DisplayName
-from .actions import count_occurrence, convert_int, convert_float, convert_time, group_food_records, select_patient, \
-    copy_food_record, calculate_nutrition
+from .actions import count_occurrence, convert_int, convert_float, convert_time, group_food_records, \
+    select_date_patient, copy_food_record, calculate_nutrition
 import datetime
 
 
@@ -46,6 +46,7 @@ def home(request):
                 food_record.save()
             form = FoodRecordForm()
         elif request.POST.get('copy_date'):
+            form = FoodRecordForm()
             copy_date = datetime.datetime.strptime(request.POST.get('copy_date'), '%Y-%m-%d')
             time = datetime.datetime.strptime(request.POST.get('copy_time'), '%H:%M')
             for food_record in request.POST.get('food_records').split(",")[:-1]:
@@ -54,8 +55,12 @@ def home(request):
                 record.creator = request.user
                 record.datetime = copy_date.replace(hour=time.hour, minute=time.minute)
                 record.created_at = datetime.datetime.now()
-                record.save()
-            form = FoodRecordForm()
+                existing_object = FoodRecord.objects.filter(patient_id=record.patient_id).filter(
+                    datetime=record.datetime).filter(product=record.product).filter(amount=record.amount).first()
+                if existing_object:
+                    print("foodrecord already exists")
+                else:
+                    record.save()
         else:
             form = FoodRecordForm(request.POST)
             # Process form
@@ -119,7 +124,7 @@ def home(request):
     else:
         form = FoodRecordForm()
 
-    selected_patient = select_patient(request)
+    selected_date, selected_patient = select_date_patient(request)
     form.initial['patient_id'] = selected_patient
 
     if not request.user.is_staff:
@@ -127,13 +132,34 @@ def home(request):
     else:
         food_records = FoodRecord.objects.filter(patient_id=selected_patient)
 
+    dates = food_records.order_by('datetime').values("datetime").distinct()
+    date_list = []
+    for date in dates:
+        if date["datetime"].date() not in date_list:
+            date_list.append(date["datetime"].date())
+
+    if selected_date != "ALL":
+        form.initial['datum'] = selected_date
+        food_records_date = food_records.filter(
+            datetime__year=selected_date.year,
+            datetime__month=selected_date.month,
+            datetime__day=selected_date.day
+        )
+        if not food_records_date:
+            selected_date = "ALL"
+        else:
+            food_records = food_records_date
+
+
     food_records_grouped = group_food_records(food_records)
 
     patient_list = FoodRecord.objects.all().values("patient_id").distinct()
 
+
     return render(request, 'home.html', {'form': form, 'copy_form': CopyMealForm(),
                                          'food_records_grouped': sorted(food_records_grouped.items(), reverse=True),
-                                         'patient_list': patient_list, 'selected_patient': selected_patient})
+                                         'patient_list': patient_list, 'selected_patient': selected_patient,
+                                         'date_list': reversed(date_list), 'selected_date': selected_date})
 
 @login_required
 def delete_record(request, id):
@@ -145,6 +171,8 @@ def delete_record(request, id):
                 product.occurrence -= 1
                 product.save()
             record.delete()
+    if request.GET.get('select_date') and request.GET.get("select_patient"):
+        return redirect('/?select_date='+request.GET.get('select_date')+"&select_patient="+request.GET.get("select_patient"))
     return redirect('/')
 
 

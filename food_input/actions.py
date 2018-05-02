@@ -2,6 +2,7 @@ import unicodecsv
 from django.http import HttpResponse
 from .models import Product, FoodRecord, DisplayName, Measurement
 from collections import defaultdict, OrderedDict
+import datetime
 
 def export_as_csv_action(description="Export selected objects as CSV file",
                          fields=None, exclude=None, header=True):
@@ -116,19 +117,40 @@ def group_food_records(food_records):
             food_records_grouped[date]['Avond'].append(food_record)
     return food_records_grouped
 
-def select_patient(request):
+def select_date_patient(request):
     selected_patient = 0
+    selected_date = datetime.datetime.now().date()
     created_food_records = FoodRecord.objects.filter(creator=request.user).order_by('-created_at')
     if created_food_records:
         selected_patient = created_food_records.first().patient_id
-    if request.method == 'POST' and request.POST.get('patient_id'):
-        selected_patient = request.POST.get('patient_id')
+        selected_date = created_food_records.first().datetime.date()
+
+    if request.method == 'POST':
+        if request.POST.get('patient_id'):
+            selected_patient = request.POST.get('patient_id')
+        if request.POST.get('select_date') and request.POST.get('select_date') == "ALL":
+            selected_date = "ALL"
+        elif request.POST.get("datum"):
+            selected_date = datetime.datetime.strptime(request.POST.get("datum"), '%Y-%m-%d').date()
+
     if request.method == 'GET':
         if convert_int(request.GET.get('select_patient')):
             selected_patient = convert_int(request.GET.get('select_patient'))
+            created_food_records = FoodRecord.objects.filter(patient_id=selected_patient).order_by('-created_at')
+            if not request.GET.get('select_date') and created_food_records:
+                selected_date = created_food_records.first().datetime.date()
         elif request.GET.get('copy'):
-            selected_patient = FoodRecord.objects.filter(id=request.GET.get('copy')).first().patient_id
-    return selected_patient
+            copied_food_record = FoodRecord.objects.filter(id=request.GET.get('copy')).first()
+            selected_patient = copied_food_record.patient_id
+            selected_date = copied_food_record.datetime.date()
+        if request.GET.get('select_date'):
+            date_request = request.GET.get('select_date')
+            if date_request == "ALL":
+                selected_date = "ALL"
+            else:
+                selected_date = datetime.datetime.strptime(date_request, '%Y-%m-%d').date()
+
+    return selected_date, selected_patient
 
 def copy_food_record(food_record):
     initial_data = {}

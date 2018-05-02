@@ -8,6 +8,9 @@
 
   <form method="post">
     {% csrf_token %}
+      {% if selected_date == 'ALL' %}
+      <input type="hidden" name="select_date" value="ALL">
+      {% endif %}
     <div class="mb-3">
     {% for field in form.visible_fields %}
       {% if field.id_for_label == "id_koppel_eenheid_aan_alle_producten_binnen_deze_categorie" %}
@@ -49,19 +52,36 @@
       </button>
     </div>
     </form>
+
+
     {% if user.is_staff %}
     <form method="get">
-<div class="form-group">
-    <label for="id_select_patient">Geselecteerde patiënt</label>
-    <select onchange="this.form.submit()" name="select_patient" class="form-control" id="id_categorie">
-        {% for patient in patient_list %}
-             <option {% ifequal selected_patient patient.patient_id %} selected {% endifequal %}
-                     value="{{ patient.patient_id }}">{{ patient.patient_id }}</option>
-        {% endfor %}
-    </select>
-</div>
-        </form>
+        <div class="form-group">
+            <label for="id_select_patient">Geselecteerde patiënt</label>
+            <select onchange="this.form.submit()" name="select_patient" class="form-control" id="id_select_patient">
+                {% for patient in patient_list %}
+                     <option {% ifequal selected_patient patient.patient_id %} selected {% endifequal %}
+                             value="{{ patient.patient_id }}">{{ patient.patient_id }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
     {% endif %}
+
+    <form method="get">
+        <input type="hidden" name="select_patient" value="{{ selected_patient }}">
+        <div class="form-group">
+            <label for="id_select_patient">Geselecteerde datum</label>
+            <select onchange="this.form.submit()" name="select_date" class="form-control" id="id_select_date">
+                <option value="ALL" {% if selected_date == "ALL" %} selected{% endif %}><b>Alle datums</b></option>
+                {% for date in date_list %}
+                     <option {% ifequal selected_date date %} selected {% endifequal %}
+                             value="{{ date|date:'Y-m-d' }}">{{ date }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+
 
      <table class="table">
          <thead class="thead-light">
@@ -106,6 +126,9 @@
                         <tr>
                             <form method="post">
                                 {% csrf_token %}
+                                {% if selected_date == 'ALL' %}
+                                    <input type="hidden" name="select_date" value="ALL">
+                                {% endif %}
                                 <input type="hidden" name="food_records" value="{% for food_record in food_records %}{{ food_record.id }},{% endfor %}">
                                 <th></th>
                                 <th colspan="9">
@@ -163,8 +186,8 @@
                                 <td>{{ food_record.field_05001|floatformat }}</td>
                                 <td>{{ food_record.field_02002|floatformat }}</td>
                                 <td>{{ food_record.field_03001|floatformat }}</td>
-                                <td><a href="/{{food_record.id}}"><span class="glyphicon glyphicon-remove"></span></a>
-                                <a href="?copy={{food_record.id}}"><span class="glyphicon glyphicon-duplicate"></span></a></td>
+                                <td><a href="/{{food_record.id}}/?select_date={% if selected_date == 'ALL' %}{{selected_date}}{% else %}{{ selected_date|date:'Y-m-d' }}{% endif %}&select_patient={{selected_patient}}"><span class="glyphicon glyphicon-remove"></span></a>
+                                <a href="?copy={{food_record.id}}&select_date={% if selected_date == 'ALL' %}{{selected_date}}{% else %}{{ selected_date|date:'Y-m-d' }}{% endif %}"><span class="glyphicon glyphicon-duplicate"></span></a></td>
                                 {% if user.is_staff %}<td>{{ food_record.creator }}</td>{% endif %}
                              </tr>
                         </form>
