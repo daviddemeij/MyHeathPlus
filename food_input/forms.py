@@ -46,14 +46,15 @@ class FoodRecordForm(forms.ModelForm):
     )
     class Meta:
         model = FoodRecord
-        fields = ['patient_id', 'datum', 'tijd', 'categorie', 'display_name', 'eenheid', 'koppel_eenheid_aan_alle_producten_binnen_deze_categorie', 'aantal_eenheden']
+        fields = ['patient_id', 'datum', 'tijd', 'missing_time', 'categorie', 'display_name', 'eenheid', 'koppel_eenheid_aan_alle_producten_binnen_deze_categorie', 'aantal_eenheden']
         widgets = {
             'display_name': autocomplete.ModelSelect2(url='product-autocomplete', forward=['categorie']),
 
         }
         labels = {'patient_id': _('Patient ID'),
                   'amount': _('Hoeveelheid (gram)'),
-                  'display_name': _('Product')}
+                  'display_name': _('Product'),
+                  'missing_time': _('Tijd Onbekend')}
 
 class MeasurementForm(forms.ModelForm):
     class Meta:
