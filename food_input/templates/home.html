@@ -13,7 +13,7 @@
       {% endif %}
     <div class="mb-3">
     {% for field in form.visible_fields %}
-      {% if field.id_for_label == "id_koppel_eenheid_aan_alle_producten_binnen_deze_categorie" %}
+      {% if field.id_for_label == "id_koppel_eenheid_aan_alle_producten_binnen_deze_categorie" or field.id_for_label == "id_missing_time" %}
             {% if user.is_staff %}
            <label for="{{ field.id_for_label }}">{{ field.label }}</label>: {{ field }}
             {% endif %}
@@ -167,7 +167,11 @@
                             <input type="hidden" name="food_record_id" value="{{ food_record.id }}">
                             <tr>
                                 {% if user.is_staff %}<td>{{ food_record.patient_id }}</td>{% endif %}
+                                {% if user.is_staff and food_record.missing_time %}
+                                <td>Onbekend</td>
+                                {% else %}
                                 <td><input onchange="this.form.submit()" size="4" class="form-inline" name="update_datetime" step="any" required value="{{ food_record.datetime.time }}"></td>
+                                {% endif %}
                                 <td>
                                     {{ food_record.product.fabrikantnaam }}
                                     {% if food_record.display_name %}

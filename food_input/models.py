@@ -198,13 +198,14 @@ class DisplayName(models.Model):
 class FoodRecord(models.Model):
     patient_id = models.IntegerField()
     datetime = models.DateTimeField()
+    missing_time = models.BooleanField(default=False)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     display_name = models.ForeignKey(DisplayName, on_delete=models.PROTECT, blank=True, null=True)
     amount = models.FloatField()
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=False)
     created_at = models.DateTimeField(default=dt.datetime.now)
-    measurement = models.ForeignKey(Measurement, on_delete=models.PROTECT)
-    amount_of_measurements = models.FloatField()
+    measurement = models.ForeignKey(Measurement, on_delete=models.PROTECT, null=True, blank=True)
+    amount_of_measurements = models.FloatField(null=True, blank=True)
 
     field_01001 = models.TextField(db_column='_01001', blank=True, null=True)  # Field renamed because it started with '_'.
     field_01002 = models.TextField(db_column='_01002', blank=True, null=True)  # Field renamed because it started with '_'.
