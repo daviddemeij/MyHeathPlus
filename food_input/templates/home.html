@@ -164,11 +164,14 @@
                     {% for food_record in food_records %}
                         <form method="post">
                             {% csrf_token %}
+                            {% if selected_date == 'ALL' %}
+                                <input type="hidden" name="select_date" value="ALL">
+                            {% endif %}
                             <input type="hidden" name="food_record_id" value="{{ food_record.id }}">
                             <tr>
                                 {% if user.is_staff %}<td>{{ food_record.patient_id }}</td>{% endif %}
                                 {% if user.is_staff and food_record.missing_time %}
-                                <td>Onbekend</td>
+                                <td><input onchange="this.form.submit()" size="7" class="form-inline" name="update_datetime" step="any" required value="Onbekend"></td>
                                 {% else %}
                                 <td><input onchange="this.form.submit()" size="4" class="form-inline" name="update_datetime" step="any" required value="{{ food_record.datetime.time }}"></td>
                                 {% endif %}
