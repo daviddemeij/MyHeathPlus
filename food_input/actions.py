@@ -81,6 +81,8 @@ def convert_float(s):
         return False
 
 def convert_time(s):
+    if s == "?" or s.lower == "onbekend":
+        return "?"
     try:
         validtime = datetime.datetime.strptime(s, "%H:%M")
         return validtime
@@ -126,12 +128,15 @@ def select_date_patient(request):
         selected_date = created_food_records.first().datetime.date()
 
     if request.method == 'POST':
+        if request.POST.get('update_eenheden'):
+            selected_date = FoodRecord.objects.get(pk=request.POST.get('food_record_id')).datetime.date()
         if request.POST.get('patient_id'):
             selected_patient = request.POST.get('patient_id')
         if request.POST.get('select_date') and request.POST.get('select_date') == "ALL":
             selected_date = "ALL"
         elif request.POST.get("datum"):
             selected_date = datetime.datetime.strptime(request.POST.get("datum"), '%Y-%m-%d').date()
+
 
     if request.method == 'GET':
         if convert_int(request.GET.get('select_patient')):
