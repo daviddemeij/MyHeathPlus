@@ -45,6 +45,7 @@ def home(request):
                     if update_time == "?":
                         food_record.missing_time = True
                     else:
+                        food_record.missing_time = False
                         food_record.datetime = food_record.datetime.replace(hour=update_time.hour, minute=update_time.minute)
                 food_record.save()
             form = FoodRecordForm()
