@@ -42,7 +42,10 @@ def home(request):
                         food_record.amount_of_measurements = update_value
                         food_record.amount = update_value * measurement.amount
                 if update_time:
-                    food_record.datetime = food_record.datetime.replace(hour=update_time.hour, minute=update_time.minute)
+                    if update_time == "?":
+                        food_record.missing_time = True
+                    else:
+                        food_record.datetime = food_record.datetime.replace(hour=update_time.hour, minute=update_time.minute)
                 food_record.save()
             form = FoodRecordForm()
         elif request.POST.get('copy_date'):

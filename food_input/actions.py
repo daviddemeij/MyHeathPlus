@@ -81,6 +81,8 @@ def convert_float(s):
         return False
 
 def convert_time(s):
+    if s == "?":
+        return s
     try:
         validtime = datetime.datetime.strptime(s, "%H:%M")
         return validtime
