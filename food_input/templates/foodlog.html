@@ -173,7 +173,7 @@
                                 {% if user.is_staff and food_record.missing_time %}
                                 <td><input onchange="this.form.submit()" size="7" class="form-inline" name="update_datetime" step="any" required value="Onbekend"></td>
                                 {% else %}
-                                <td><input onchange="this.form.submit()" size="4" class="form-inline" name="update_datetime" step="any" required value="{{ food_record.datetime.time }}"></td>
+                                <td><input onchange="this.form.submit()" size="4" class="form-inline" name="update_datetime" step="any" required value="{{ food_record.datetime|date:'H:i' }}"></td>
                                 {% endif %}
                                 <td>
                                     {{ food_record.product.fabrikantnaam }}
