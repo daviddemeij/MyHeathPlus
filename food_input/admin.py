@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, FoodRecord, Measurement, DisplayName
+from .models import Product, FoodRecord, Measurement, DisplayName, GlucoseValue
 from .actions import export_as_csv_action
 from .forms import MeasurementForm
 
@@ -25,3 +25,10 @@ class DisplayNameAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'product_omschrijving', 'productgroep_oms', 'occurrence')
     list_filter = ('productgroep_oms',)
+
+@admin.register(GlucoseValue)
+class FoodRecordAdmin(admin.ModelAdmin):
+    list_display = ('id', 'patient_id', 'datetime', 'glucose_value',  'creator')
+    product_fields = ['id', 'patient_id', 'datetime', 'glucose_value']
+    actions = [export_as_csv_action("CSV Export", fields=product_fields)]
+    list_filter = ('creator', 'patient_id')
