@@ -160,7 +160,7 @@ def home(request):
     patient_list = FoodRecord.objects.all().values("patient_id").distinct()
 
 
-    return render(request, 'home.html', {'form': form, 'copy_form': CopyMealForm(),
+    return render(request, 'foodlog.html', {'form': form, 'copy_form': CopyMealForm(),
                                          'food_records_grouped': sorted(food_records_grouped.items(), reverse=True),
                                          'patient_list': patient_list, 'selected_patient': selected_patient,
                                          'date_list': reversed(date_list), 'selected_date': selected_date})
