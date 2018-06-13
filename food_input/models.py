@@ -349,3 +349,14 @@ class FoodRecord(models.Model):
 
     def __str__(self):
         return " Patient " + str(self.patient_id) + " (" + self.datetime.strftime('%Y-%m-%d %H:%M') + ") - " + self.product.product_omschrijving + " (" + str(self.amount) + " gram) "
+
+    class GlucoseValue(models.Model):
+        id = models.AutoField(primary_key=True)
+        datetime = models.DateTimeField(null=False, blank=False)
+        patient_id = models.IntegerField(null=False, blank=False)
+        glucose_value = models.FloatField(null=False, blank=False)
+        creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+        created_at = models.DateTimeField(default=dt.datetime.now)
+
+        class Meta:
+            unique_together = ('datetime', 'patient_id')
