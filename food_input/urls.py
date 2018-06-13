@@ -8,6 +8,8 @@ print("Counting occurrence!")
 count_occurrence()
 
 urlpatterns = [path('', views.home),
+               path('privacy_policy/', views.privacy_policy),
+               path('foodlog/', views.foodlog, name='foodlog'),
                url('product-autocomplete/',
                views.ProductAutocomplete.as_view(),
                name='product-autocomplete'),
@@ -22,6 +24,7 @@ urlpatterns = [path('', views.home),
                path('api/food_records/<int:id>/', api.food_record, name="food_record"),
                url('api/food_records/', api.food_record_list),
                url('api/measurements/', api.measurement_list),
-               url('api/products/', api.product_list)
+               url('api/products/', api.product_list),
+               url('upload_glucose/', views.upload_glucose, name='upload_glucose'),
 
                ]

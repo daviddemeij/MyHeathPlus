@@ -2,13 +2,29 @@ from django.shortcuts import render, redirect
 from .forms import FoodRecordForm, CopyMealForm
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required
-
-from .models import FoodRecord, Measurement, Product, DisplayName
+from .models import FoodRecord, Measurement, Product, DisplayName, GlucoseValue
 from .actions import count_occurrence, convert_int, convert_float, convert_time, group_food_records, \
-    select_date_patient, copy_food_record, calculate_nutrition
+    select_date_patient, copy_food_record, calculate_nutrition, convert_datetime
 import datetime
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
 
+def privacy_policy(request):
+    return render(request, 'privacy_policy.html')
 
+def home(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('/foodlog')
+    else:
+        form = UserCreationForm()
+    return render(request, 'home.html', {'form': form})
 
 @login_required
 def count(request):
@@ -19,8 +35,7 @@ def count(request):
         return redirect('/')
 
 @login_required
-def home(request):
-
+def foodlog(request):
     if request.method == 'GET' and convert_int(request.GET.get('copy')):
         food_record = FoodRecord.objects.filter(id=request.GET.get('copy')).first()
         initial_data = copy_food_record(food_record)
@@ -68,7 +83,6 @@ def home(request):
         else:
             form = FoodRecordForm(request.POST)
             # Process form
-            print(form)
             if form.is_valid():
                 eenheid = Measurement.objects.get(pk=request.POST.get("eenheid"))
                 instance = form.save(commit=False)
@@ -79,7 +93,8 @@ def home(request):
                 date = datetime.datetime.strptime(request.POST.get('datum'), '%Y-%m-%d')
                 time = datetime.datetime.strptime(request.POST.get('tijd'), '%H:%M')
                 instance.datetime = date.replace(hour=time.hour, minute=time.minute)
-
+                if not request.user.is_staff:
+                    instance.patient_id = convert_int(request.user.get_username)
 
                 # Link productgroup to measurement unit
                 link_measurement = request.POST.get('koppel_eenheid_aan_alle_producten_binnen_deze_categorie')
@@ -160,7 +175,7 @@ def home(request):
     patient_list = FoodRecord.objects.all().values("patient_id").distinct()
 
 
-    return render(request, 'home.html', {'form': form, 'copy_form': CopyMealForm(),
+    return render(request, 'foodlog.html', {'form': form, 'copy_form': CopyMealForm(),
                                          'food_records_grouped': sorted(food_records_grouped.items(), reverse=True),
                                          'patient_list': patient_list, 'selected_patient': selected_patient,
                                          'date_list': reversed(date_list), 'selected_date': selected_date})
@@ -215,3 +230,25 @@ class MeasurementAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(linked_product=product)
         return qs.order_by('amount')
 
+@login_required()
+def upload_glucose(request):
+    if request.POST and request.FILES and request.POST.get('patient_id'):
+        patient_id = convert_int(request.POST.get('patient_id'))
+        csvfile = request.FILES['csv_file']
+        i=0
+        for row in csvfile:
+            row_decoded = row.decode("utf-8").split("\t")
+            if len(row_decoded) >= 3:
+                date = convert_datetime(row_decoded[1])
+                glucose = convert_float(row_decoded[3])
+                if date and glucose > 0.0 and patient_id:
+                    existing_object = GlucoseValue.objects.filter(patient_id=patient_id).filter(
+                        datetime=date).first()
+                    if existing_object:
+                        print("Duplicate glucose value " + str(glucose) + " for patient " + str(patient_id) +
+                              " at " + str(datetime))
+                    else:
+                        GlucoseValue.objects.create(datetime=date, glucose_value=glucose,
+                                                    patient_id=patient_id, creator=request.user)
+
+    return render(request, "upload_glucose.html")

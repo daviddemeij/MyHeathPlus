@@ -10,35 +10,94 @@
     {% load static %}
     <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" type="text/css"/>
     <script src="{% static 'js/bootstrap.js' %}"></script>
+    <style>
+        body {
+    counter-reset: footnotecounter;
+        }
 
+        span.footnote:before {
+          counter-increment: footnotecounter;
+          content: counter(footnotecounter);
+          position: relative;
+          top: -0.4em;
+        }
+
+        span.footnote {
+            color: #24B1E6;
+        }
+    </style>
     <title>Food input app</title>
-
+            <script>
+            jQuery(document).ready(function() {
+                jQuery('[data-toggle="tooltip"]').each(function() {
+                    var $elem = jQuery(this);
+                    $elem.tooltip({
+                        html:true,
+                        container: $elem,
+                        delay: {hide:400}
+                    });
+                });
+            });
+        </script>
   </head>
   <body>
-    <div class="container">
-        <div class="navbar-header">
-            {% if user.is_authenticated %}
-                {{ user.get_username }}
-                {% if user.is_staff %}
-                <a href="/admin/">Admin</a>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/">MyHealth+</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/foodlog">Food Logging</a></li>
+        <li><a href="/upload_glucose">Upload Blood Glucose</a></li>
+      </ul>
+
+        {% if user.is_authenticated %}
+
+
+        <p class="navbar-text navbar-right"><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></p>
+        {% if user.is_staff %}
+            <p class="navbar-text navbar-right"><a href="/admin/">Admin</a></p>
+        {% endif %}
+        <p class="navbar-text navbar-right">Signed in as {{ user.get_username }}</p>
+                {% else %}
+        <p class="navbar-text navbar-right"><a href="{% url 'login'%}?next={{request.path}}">Login</a></p>
                 {% endif %}
-                <a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
-            {% else %}
-            <a href="{% url 'login'%}?next={{request.path}}">Login</a>
-            {% endif %}
-        </div>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+    <div class="container">
+
         <div class="py-5 text-center">
-    <h2>Food input tool</h2>
-    <p class="lead">Tool om gemakkelijk voedingsdagboeken te verwerken</p>
-</div>
+            <h2><a href="/"><img src="{% static 'img/logo_animated.gif' %}" style="max-width:290px;height:auto"></a></h2>
+
+      <!--      <h2>Food input tool</h2>
+    <p class="lead">Tool om gemakkelijk voedingsdagboeken te verwerken</p>-->
+        </div>
+    </div>
         {% block content %}
         {% endblock %}
-    </div>
-    <br><br><br> <br><br><br> <br><br><br>
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script type="text/javascript" src='{% static "js/jquery.js" %}' %></script>
-
+        <script type="text/javascript" src='{% static "js/bootstrap.min.js" %}' %></script>
+        <br>
 </body>
+<footer>
+    <div class="footer-copyright text-center py-3">© 2018 Copyright:
+    <a href="http://www.myhealthplus.nl">MyHealthPlus.nl</a>
+  </div>
+</footer>
 </html>
