@@ -9,7 +9,7 @@
                 <label for="patient_id">Patient ID</label>
                 <input type="number" name="patient_id" step="1" class="form-control" required id="id_patient_id">
             {% else %}
-                <input type="hidden" name="patient_id" required_id="id_patient_id" value="{{ user.get_username }}">
+                <input type="hidden" name="patient_id" required_id="id_patient_id" value="{{ user.id }}">
             {% endif %}
         </div>
         <div class="form-group">
