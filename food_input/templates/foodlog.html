@@ -19,7 +19,7 @@
                <label for="{{ field.id_for_label }}">{{ field.label }}</label>: {{ field }}
                 {% endif %}
             {% elif field.label == "Patient ID" and not user.is_staff %}
-                <input type="hidden" name="{{ field.name }}" required_id="{{ field.id_for_label }}" value="{{ user.get_username }}">
+                <input type="hidden" name="{{ field.name }}" required_id="{{ field.id_for_label }}" value="{{ user.id }}">
             {% else %}
                   <div class="form-group">
                     <label for='{{ field.id_for_label }}'>{{ field.label }}</label>

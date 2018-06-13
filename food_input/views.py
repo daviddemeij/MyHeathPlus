@@ -36,6 +36,7 @@ def count(request):
 
 @login_required
 def foodlog(request):
+    print("ID = ", request.user.id)
     if request.method == 'GET' and convert_int(request.GET.get('copy')):
         food_record = FoodRecord.objects.filter(id=request.GET.get('copy')).first()
         initial_data = copy_food_record(food_record)
@@ -94,7 +95,7 @@ def foodlog(request):
                 time = datetime.datetime.strptime(request.POST.get('tijd'), '%H:%M')
                 instance.datetime = date.replace(hour=time.hour, minute=time.minute)
                 if not request.user.is_staff:
-                    instance.patient_id = convert_int(request.user.get_username)
+                    instance.patient_id = convert_int(request.user.id)
 
                 # Link productgroup to measurement unit
                 link_measurement = request.POST.get('koppel_eenheid_aan_alle_producten_binnen_deze_categorie')
