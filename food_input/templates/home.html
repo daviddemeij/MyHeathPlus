@@ -1,0 +1,109 @@
+{% extends 'base.html'%}
+
+{% block content %}
+{{ form.media }}
+
+  {% load widget_tweaks %}
+{% load static %}
+
+<section>
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-4"><br><img class="center-block img-responsive"  src="{% static 'img/step1.png' %}" width="60%" height="60%"></div>
+            <div class="col-md-4"><br><img class="center-block img-responsive" src="{% static 'img/step2.png' %}" width="75%" height="75%"></div>
+            <div class="col-md-4"><br><img class="center-block img-responsive" src="{% static 'img/step3.png' %}" width="60%" height="60%"></div>
+        </div>
+    </div>
+</section>
+        <br>
+<section class="bg-primary  text-white">
+    <div class="container">
+        <div class="row">
+            <h2>How does it work?</h2>
+            <p>It has been shown that the blood glucose response to a certain meal is an important indicator of health,
+                having a higher blood glucose peak after a meal means that you will store fat and experience decreased
+                physical as well as cognitive performance<span style="color: #42f45c" class="footnote" data-toggle="tooltip" title="" data-original-title="
+                Blaak, E.E., Antoine, J.-M., Benton, D., Björck, I., Bozzetto, L., Brouns, F., Diamant,
+M., Dye, L., Hulshof, T., Holst, J.J., et al. (2012). Impact of postprandial
+glycaemia on health and prevention of disease. Obes. Rev. 13, 923–984.
+                <a style='color: #42f45c' href='https://www.ncbi.nlm.nih.gov/pubmed/22780564'>(source)</a>"></span>
+                and in the long-term increase your chance on diseases such as Diabetes
+                <span style="color: #42f45c" class="footnote" data-toggle="tooltip" title="" data-original-title="
+                American Diabetes Association (2015a).
+                (5) Prevention or delay of type 2 diabetes. Diabetes Care 38 (Suppl ), S31–S32.
+                <a style='color: #42f45c' href='http://care.diabetesjournals.org/content/38/Supplement_1/S31'>(source)</a>">
+                </span>, Cardiovascular disease <span style="color: #42f45c" class="footnote" data-toggle="tooltip" title="" data-original-title="
+                Gallwitz, B. (2009). Implications of postprandial glucose and weight control in
+                people with type 2 diabetes: understanding and implementing the International
+                Diabetes Federation guidelines. Diabetes Care 32 (Suppl 2 ), S322–S325.
+                <a style='color: #42f45c' href='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2811482/'>(source)</a>"></span> and Obesity
+                    <span style="color: #42f45c" class="footnote" data-toggle="tooltip" title="" data-original-title="
+                Blaak, E.E., Antoine, J.-M., Benton, D., Björck, I., Bozzetto, L., Brouns, F., Diamant,
+M., Dye, L., Hulshof, T., Holst, J.J., et al. (2012). Impact of postprandial
+glycaemia on health and prevention of disease. Obes. Rev. 13, 923–984.
+                <a style='color: #42f45c' href='https://www.ncbi.nlm.nih.gov/pubmed/22780564'>(source)</a>"></span>. It can also result in a overproduction of insulin leading
+                to a blood glucose dip a few hours after your meal, which may cause overeating.</p>
+        </div>
+        <div class="row">
+            <img class="center-block"  style="width:350px;max-width:80%;height:auto" src="{% static 'img/glucose_graph.png' %}">
+        </div>
+        <div class="row">
+            <br>
+            Research has shown that people can have very different blood glucose responses to the same meal,
+            based on their genetics, lifestyle and their gut microbiome composition
+            <span style="color: #42f45c" class="footnote" data-toggle="tooltip" title="" data-original-title="
+                Zeevi, D. et al. Personalized nutrition by prediction of glycemic responses. Cell
+163, 1079–1094 (2015).<a style='color: #42f45c' href='https://www.cell.com/cell/fulltext/S0092-8674(15)01481-6'>(source)</a>"></span>.
+            That's why it is important to measure our actual blood glucose responses to certain meals giving us insight in
+            what food is healthy for you and what food you might want to avoid.
+        </div>
+        <div class="row">
+            <br>
+            For measuring your blood glucose response we recommend using a continuous blood glucose monitoring sensor
+            such as the <a style="color: #42f45c" href="https://www.freestylelibre.nl/products.html">Freestyle Libre</a>. However, it is also
+            possible to use <a style="color: #42f45c" href="https://www.bol.com/nl/l/bloedsuikermeters/N/20979/">finger-pricking</a> right before
+            consuming meal and then at 30, 60, 90 and 120 minutes after this meal.
+        </div>
+        <div class="row">
+            <br>
+            <br><br>
+        </div>
+    </div>
+</section>
+<section>
+    <div class="container">
+        <div class="row">
+            <br>
+            This platform is still in early stage development. But you can already keep track of your food intake and upload your glucose data
+            by registering through the form below. More functionalities will follow soon.
+            <h2>Sign up</h2>
+          <form method="post">
+            {% csrf_token %}
+            {% for field in form.visible_fields %}
+                  <div class="form-group">
+                    <label for='{{ field.id_for_label }}'>{{ field.label }}</label>
+                    {{ field|add_class:'form-control' }}
+                    {% for error in field.errors %}
+                      <span class="help-block">{{ error }}</span>
+                    {% endfor %}
+                      {% if field.help_text %}
+                            <p class="help-inline"><small>{{ field.help_text|safe }}</small></p>
+                        {% endif %}
+                  </div>
+              {% endfor %}
+             <div class="form-group">
+                        <label for="accept_privacy_policy">I have read and accept your <a href="/privacy_policy">privacy policy</a></label>
+                        <input id="accept_privacy_policy" name="privacy_policy" type="checkbox" required>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">
+                <span class="glyphicon glyphicon-ok"></span> Register
+            </button>
+        </div>
+          </form>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

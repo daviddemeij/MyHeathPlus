@@ -4,205 +4,207 @@
 {{ form.media }}
 
 {% load widget_tweaks %}
-<div class="row">
+<div class="container">
+    <div class="row">
 
-  <form method="post">
-    {% csrf_token %}
-      {% if selected_date == 'ALL' %}
-      <input type="hidden" name="select_date" value="ALL">
-      {% endif %}
-    <div class="mb-3">
-    {% for field in form.visible_fields %}
-      {% if field.id_for_label == "id_koppel_eenheid_aan_alle_producten_binnen_deze_categorie" or field.id_for_label == "id_missing_time" %}
-            {% if user.is_staff %}
-           <label for="{{ field.id_for_label }}">{{ field.label }}</label>: {{ field }}
-            {% endif %}
-        {% elif field.label == "Patient ID" and not user.is_staff %}
-            <input type="hidden" name="{{ field.name }}" required_id="{{ field.id_for_label }}" value="{{ user.get_username }}">
-        {% else %}
-              <div class="form-group">
-                <label for='{{ field.id_for_label }}'>{{ field.label }}</label>
-                {{ field|add_class:'form-control' }}
-                {% for error in field.errors %}
-                  <span class="help-block">{{ error }}</span>
-                {% endfor %}
-              </div>
-      {% endif %}
-      {% if field.label == "Product" and user.is_staff %}
-                <div class="form-group">
-                    <label for="use_different_name">Gebruik een andere naam voor dit product</label>
-                    <input id="id_use_different_name" name="use_different_name" type="checkbox" onchange="$('#myId').toggleClass('hidden');">
-                </div>
-            <div id="myId" class="hidden">
-                <div class="mv-3">
+      <form method="post">
+        {% csrf_token %}
+          {% if selected_date == 'ALL' %}
+          <input type="hidden" name="select_date" value="ALL">
+          {% endif %}
+        <div class="mb-3">
+        {% for field in form.visible_fields %}
+          {% if field.id_for_label == "id_koppel_eenheid_aan_alle_producten_binnen_deze_categorie" or field.id_for_label == "id_missing_time" %}
+                {% if user.is_staff %}
+               <label for="{{ field.id_for_label }}">{{ field.label }}</label>: {{ field }}
+                {% endif %}
+            {% elif field.label == "Patient ID" and not user.is_staff %}
+                <input type="hidden" name="{{ field.name }}" required_id="{{ field.id_for_label }}" value="{{ user.get_username }}">
+            {% else %}
+                  <div class="form-group">
+                    <label for='{{ field.id_for_label }}'>{{ field.label }}</label>
+                    {{ field|add_class:'form-control' }}
+                    {% for error in field.errors %}
+                      <span class="help-block">{{ error }}</span>
+                    {% endfor %}
+                  </div>
+          {% endif %}
+          {% if field.label == "Product" and user.is_staff %}
                     <div class="form-group">
-                      <label for="different_name">Alternatieve Productnaam</label>
-                      <input id="id_different_name" name="different_name" class="form-control" type="text">
+                        <label for="use_different_name">Gebruik een andere naam voor dit product</label>
+                        <input id="id_use_different_name" name="use_different_name" type="checkbox" onchange="$('#myId').toggleClass('hidden');">
+                    </div>
+                <div id="myId" class="hidden">
+                    <div class="mv-3">
+                        <div class="form-group">
+                          <label for="different_name">Alternatieve Productnaam</label>
+                          <input id="id_different_name" name="different_name" class="form-control" type="text">
+                        </div>
                     </div>
                 </div>
+          {% endif %}
+        {% endfor %}
             </div>
-      {% endif %}
-    {% endfor %}
-        </div>
 
 
-    <div class="form-group">
-      <button type="submit" class="btn btn-success">
-        <span class="glyphicon glyphicon-ok"></span> Save
-      </button>
-    </div>
-    </form>
-
-
-    {% if user.is_staff %}
-    <form method="get">
         <div class="form-group">
-            <label for="id_select_patient">Geselecteerde patiënt</label>
-            <select onchange="this.form.submit()" name="select_patient" class="form-control" id="id_select_patient">
-                {% for patient in patient_list %}
-                     <option {% ifequal selected_patient patient.patient_id %} selected {% endifequal %}
-                             value="{{ patient.patient_id }}">{{ patient.patient_id }}</option>
-                {% endfor %}
-            </select>
+          <button type="submit" class="btn btn-success">
+            <span class="glyphicon glyphicon-ok"></span> Save
+          </button>
         </div>
-    </form>
-    {% endif %}
-
-    <form method="get">
-        <input type="hidden" name="select_patient" value="{{ selected_patient }}">
-        <div class="form-group">
-            <label for="id_select_patient">Geselecteerde datum</label>
-            <select onchange="this.form.submit()" name="select_date" class="form-control" id="id_select_date">
-                <option value="ALL" {% if selected_date == "ALL" %} selected{% endif %}><b>Alle datums</b></option>
-                {% for date in date_list %}
-                     <option {% ifequal selected_date date %} selected {% endifequal %}
-                             value="{{ date|date:'Y-m-d' }}">{{ date }}</option>
-                {% endfor %}
-            </select>
-        </div>
-    </form>
+        </form>
 
 
-     <table class="table">
-         <thead class="thead-light">
-             <tr>
-                 {% if user.is_staff %}<th scope="col">Patient</th>{% endif %}
-                 <th scope="col">Tijd</th>
-                 <th scope="col">Product</th>
-                 <th scope="col">Hoeveelheid</th>
-                 <th scope="col">Kcal</th>
-                 <th scope="col">Kool-<br>hydraat</th>
-                 <th scope="col">Eiwit</th>
-                 <th scope="col">Vet</th>
-                 <th scope="col">Delete<br>Copy</th>
-                 {% if user.is_staff %}<th scope="col">Creator</th>{% endif %}
+        {% if user.is_staff %}
+        <form method="get">
+            <div class="form-group">
+                <label for="id_select_patient">Geselecteerde patiënt</label>
+                <select onchange="this.form.submit()" name="select_patient" class="form-control" id="id_select_patient">
+                    {% for patient in patient_list %}
+                         <option {% ifequal selected_patient patient.patient_id %} selected {% endifequal %}
+                                 value="{{ patient.patient_id }}">{{ patient.patient_id }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+        {% endif %}
 
-             </tr>
-         </thead>
-         <tbody>
-        {% for date, dagdelen in food_records_grouped %}
-            <tr><th colspan="10" class="text-center">{{ date }}</th></tr>
-           <!-- <tr>
-                <th colspan="3" class="text-center">{{ date }}</th>
-                <th>Totaal</th>
-                {% for key, value in food_record.items %}
-                    <th>{{ value|floatformat }}</th>
-                {% endfor %}
-                <th colspan="2"></th>
-            </tr>-->
+        <form method="get">
+            <input type="hidden" name="select_patient" value="{{ selected_patient }}">
+            <div class="form-group">
+                <label for="id_select_patient">Geselecteerde datum</label>
+                <select onchange="this.form.submit()" name="select_date" class="form-control" id="id_select_date">
+                    <option value="ALL" {% if selected_date == "ALL" %} selected{% endif %}><b>Alle datums</b></option>
+                    {% for date in date_list %}
+                         <option {% ifequal selected_date date %} selected {% endifequal %}
+                                 value="{{ date|date:'Y-m-d' }}">{{ date }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
 
-            {% for dagdeel, food_records in dagdelen.items %}
-                {% if dagdeel == "total" %}
-                    <tr>
-                        {% if user.is_staff %}<th></th>{% endif %}
-                        <th colspan="2" class="text-center"></th>
-                        <th class="text-center">Totaal:</th>
-                        {% for key, value in food_records.items %}
-                            <th>{{ value|floatformat }}</th>
-                        {% endfor %}
-                    </tr>
-                {% else %}
-                    {% if food_records %}
+    <div class="table-responsive">
+         <table class="table">
+             <thead class="thead-light">
+                 <tr>
+                     {% if user.is_staff %}<th scope="col">Patient</th>{% endif %}
+                     <th scope="col">Tijd</th>
+                     <th scope="col">Product</th>
+                     <th scope="col">Hoeveelheid</th>
+                     <th scope="col">Kcal</th>
+                     <th scope="col">Kool-<br>hydraat</th>
+                     <th scope="col">Eiwit</th>
+                     <th scope="col">Vet</th>
+                     <th scope="col">Delete<br>Copy</th>
+                     {% if user.is_staff %}<th scope="col">Creator</th>{% endif %}
+
+                 </tr>
+             </thead>
+             <tbody>
+            {% for date, dagdelen in food_records_grouped %}
+                <tr><th colspan="10" class="text-center">{{ date }}</th></tr>
+               <!-- <tr>
+                    <th colspan="3" class="text-center">{{ date }}</th>
+                    <th>Totaal</th>
+                    {% for key, value in food_record.items %}
+                        <th>{{ value|floatformat }}</th>
+                    {% endfor %}
+                    <th colspan="2"></th>
+                </tr>-->
+
+                {% for dagdeel, food_records in dagdelen.items %}
+                    {% if dagdeel == "total" %}
                         <tr>
+                            {% if user.is_staff %}<th></th>{% endif %}
+                            <th colspan="2" class="text-center"></th>
+                            <th class="text-center">Totaal:</th>
+                            {% for key, value in food_records.items %}
+                                <th>{{ value|floatformat }}</th>
+                            {% endfor %}
+                        </tr>
+                    {% else %}
+                        {% if food_records %}
+                            <tr>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    {% if selected_date == 'ALL' %}
+                                        <input type="hidden" name="select_date" value="ALL">
+                                    {% endif %}
+                                    <input type="hidden" name="food_records" value="{% for food_record in food_records %}{{ food_record.id }},{% endfor %}">
+                                    <th></th>
+                                    <th colspan="9">
+                                        <div class="row">
+                                            <div class="col-sm-5 col-md-5 col-lg-5">
+                                                {{ dagdeel }}
+                                            </div>
+                                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                                {{ copy_form.copy_date }}
+                                            </div>
+                                            <div class="col-sm-1 col-md-1 col-lg-1">
+                                                {% with food_records|last as food_record %}
+                                                    <input class="form-control" name="copy_time" step="any"
+                                                    {% if food_record.datetime.hour < 5 %}
+                                                        value="{{ food_records.0.datetime|date:'H:i' }}" required >
+                                                    {% else %}
+                                                        value="{{ food_record.datetime|date:'H:i' }}" required >
+                                                    {% endif %}
+                                                {% endwith %}
+                                            </div>
+                                            <div class="col-sm-2 col-md-2 col-lg-2">
+                                                <button type="submit" class="btn btn-info">
+                                                    <span class="glyphicon glyphicon-duplicate"></span>
+                                                    Kopieer Maaltijd
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                    </th>
+                                </form>
+                            </tr>
+                        {% endif %}
+                        {% for food_record in food_records %}
                             <form method="post">
                                 {% csrf_token %}
                                 {% if selected_date == 'ALL' %}
                                     <input type="hidden" name="select_date" value="ALL">
                                 {% endif %}
-                                <input type="hidden" name="food_records" value="{% for food_record in food_records %}{{ food_record.id }},{% endfor %}">
-                                <th></th>
-                                <th colspan="9">
-                                    <div class="row">
-                                        <div class="col-sm-5 col-md-5 col-lg-5">
-                                            {{ dagdeel }}
-                                        </div>
-                                        <div class="col-sm-3 col-md-3 col-lg-3">
-                                            {{ copy_form.copy_date }}
-                                        </div>
-                                        <div class="col-sm-1 col-md-1 col-lg-1">
-                                            {% with food_records|last as food_record %}
-                                                <input class="form-control" name="copy_time" step="any"
-                                                {% if food_record.datetime.hour < 5 %}
-                                                    value="{{ food_records.0.datetime.time }}" required >
-                                                {% else %}
-                                                    value="{{ food_record.datetime.time }}" required >
-                                                {% endif %}
-                                            {% endwith %}
-                                        </div>
-                                        <div class="col-sm-2 col-md-2 col-lg-2">
-                                            <button type="submit" class="btn btn-info">
-                                                <span class="glyphicon glyphicon-duplicate"></span>
-                                                Kopieer Maaltijd
-                                            </button>
-                                        </div>
-
-                                    </div>
-                                </th>
-                            </form>
-                        </tr>
-                    {% endif %}
-                    {% for food_record in food_records %}
-                        <form method="post">
-                            {% csrf_token %}
-                            {% if selected_date == 'ALL' %}
-                                <input type="hidden" name="select_date" value="ALL">
-                            {% endif %}
-                            <input type="hidden" name="food_record_id" value="{{ food_record.id }}">
-                            <tr>
-                                {% if user.is_staff %}<td>{{ food_record.patient_id }}</td>{% endif %}
-                                {% if user.is_staff and food_record.missing_time %}
-                                <td><input onchange="this.form.submit()" size="7" class="form-inline" name="update_datetime" step="any" required value="Onbekend"></td>
-                                {% else %}
-                                <td><input onchange="this.form.submit()" size="4" class="form-inline" name="update_datetime" step="any" required value="{{ food_record.datetime|date:'H:i' }}"></td>
-                                {% endif %}
-                                <td>
-                                    {{ food_record.product.fabrikantnaam }}
-                                    {% if food_record.display_name %}
-                                        {{ food_record.display_name.name }}
+                                <input type="hidden" name="food_record_id" value="{{ food_record.id }}">
+                                <tr>
+                                    {% if user.is_staff %}<td>{{ food_record.patient_id }}</td>{% endif %}
+                                    {% if user.is_staff and food_record.missing_time %}
+                                    <td><input onchange="this.form.submit()" size="7" class="form-inline" name="update_datetime" step="any" required value="Onbekend"></td>
                                     {% else %}
-                                        {{ food_record.product.product_omschrijving }}
+                                    <td><input onchange="this.form.submit()" size="4" class="form-inline" name="update_datetime" step="any" required value="{{ food_record.datetime|date:'H:i' }}"></td>
                                     {% endif %}
-                                </td>
-                                {% if food_record.measurement and food_record.measurement.name != "gram" and food_record.amount_of_measurements %}
-                                <td><input onchange="this.form.submit()" size="3" class="form-inline" name="update_eenheden" step="any" required value="{{ food_record.amount_of_measurements }}"> {{ food_record.measurement.name }} ({{ food_record.amount|floatformat }} gram)</td>
-                                {% else %}
-                                <td><input onchange="this.form.submit()" size="3" class="form-inline" name="update_eenheden" step="any" required value="{{ food_record.amount }}"> gram</td>
-                                {% endif %}
+                                    <td>
+                                        {{ food_record.product.fabrikantnaam }}
+                                        {% if food_record.display_name %}
+                                            {{ food_record.display_name.name }}
+                                        {% else %}
+                                            {{ food_record.product.product_omschrijving }}
+                                        {% endif %}
+                                    </td>
+                                    {% if food_record.measurement and food_record.measurement.name != "gram" and food_record.amount_of_measurements %}
+                                    <td><input onchange="this.form.submit()" size="3" class="form-inline" name="update_eenheden" step="any" required value="{{ food_record.amount_of_measurements }}"> {{ food_record.measurement.name }} ({{ food_record.amount|floatformat }} gram)</td>
+                                    {% else %}
+                                    <td><input onchange="this.form.submit()" size="3" class="form-inline" name="update_eenheden" step="any" required value="{{ food_record.amount }}"> gram</td>
+                                    {% endif %}
 
-                                <td>{{ food_record.field_01001|floatformat }}</td>
-                                <td>{{ food_record.field_05001|floatformat }}</td>
-                                <td>{{ food_record.field_02002|floatformat }}</td>
-                                <td>{{ food_record.field_03001|floatformat }}</td>
-                                <td><a href="/{{food_record.id}}/?select_date={% if selected_date == 'ALL' %}{{selected_date}}{% else %}{{ selected_date|date:'Y-m-d' }}{% endif %}&select_patient={{selected_patient}}"><span class="glyphicon glyphicon-remove"></span></a>
-                                <a href="?copy={{food_record.id}}&select_date={% if selected_date == 'ALL' %}{{selected_date}}{% else %}{{ selected_date|date:'Y-m-d' }}{% endif %}"><span class="glyphicon glyphicon-duplicate"></span></a></td>
-                                {% if user.is_staff %}<td>{{ food_record.creator }}</td>{% endif %}
-                             </tr>
-                        </form>
-                    {% endfor %}
-                {% endif %}
-            {% endfor %}
-         {% endfor %}
-         </tbody>
-         </table>
-</div>
+                                    <td>{{ food_record.field_01001|floatformat }}</td>
+                                    <td>{{ food_record.field_05001|floatformat }}</td>
+                                    <td>{{ food_record.field_02002|floatformat }}</td>
+                                    <td>{{ food_record.field_03001|floatformat }}</td>
+                                    <td><a href="/{{food_record.id}}/?select_date={% if selected_date == 'ALL' %}{{selected_date}}{% else %}{{ selected_date|date:'Y-m-d' }}{% endif %}&select_patient={{selected_patient}}"><span class="glyphicon glyphicon-remove"></span></a>
+                                    <a href="?copy={{food_record.id}}&select_date={% if selected_date == 'ALL' %}{{selected_date}}{% else %}{{ selected_date|date:'Y-m-d' }}{% endif %}"><span class="glyphicon glyphicon-duplicate"></span></a></td>
+                                    {% if user.is_staff %}<td>{{ food_record.creator }}</td>{% endif %}
+                                 </tr>
+                            </form>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+             {% endfor %}
+             </tbody>
+             </table>
+        </div>
+    </div>
 {% endblock %}

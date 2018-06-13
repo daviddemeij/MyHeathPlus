@@ -74,6 +74,7 @@ def convert_int(s):
         return False
 
 def convert_float(s):
+    s = s.replace(",", ".")
     try:
         value = float(s)
         return value
@@ -88,6 +89,14 @@ def convert_time(s):
         return validtime
     except:
         return False
+
+def convert_datetime(s):
+    try:
+        return datetime.datetime.strptime(s, '%Y-%m-%d %H:%M')
+    except:
+        return False
+
+
 
 def group_food_records(food_records):
     food_records_grouped = OrderedDict()
