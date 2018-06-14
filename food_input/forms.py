@@ -63,5 +63,9 @@ class MeasurementForm(forms.ModelForm):
 
 class CopyMealForm(forms.Form):
     copy_date = forms.DateField(
-        widget=DateWidget(attrs={'id': "copy_date", "autocomplete": "off"}, usel10n=True, bootstrap_version=3)
+        widget=DateWidget(attrs={'id': "copy_date", "autocomplete": "off"}, usel10n=False, bootstrap_version=3)
     )
+
+class ProductForm(forms.Form):
+    product = forms.ModelChoiceField(queryset=Product.objects.all(),
+                                     widget=autocomplete.ModelSelect2(url='product-id-autocomplete'))

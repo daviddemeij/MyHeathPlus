@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import FoodRecordForm, CopyMealForm
+from .forms import FoodRecordForm, CopyMealForm, ProductForm
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required
 
@@ -17,6 +17,36 @@ def count(request):
         return render(request, 'count.html', {'occurrence_list': occurrence_list})
     else:
         return redirect('/')
+
+@login_required
+def update_display_names(request):
+    if request.user.is_staff:
+        form = ProductForm()
+        display_names = []
+        if request.method == 'POST':
+            if request.POST.get('product'):
+                form = ProductForm(request.POST)
+                product = Product.objects.filter(id=request.POST.get('product')).first()
+                if product:
+                    display_names = DisplayName.objects.filter(product=product)
+            elif request.POST.get('display_name_update'):
+                display_name = DisplayName.objects.filter(id=request.POST.get('display_name_id')).first()
+                if display_name:
+                    display_name.name = request.POST.get('display_name_update')
+                    display_name.save()
+                    form = ProductForm(initial={'product': display_name.product})
+                    display_names = DisplayName.objects.filter(product=display_name.product)
+        elif request.method == 'GET':
+            display_name = DisplayName.objects.filter(id=request.GET.get('display_name')).first()
+            if display_name:
+                product = display_name.product
+                display_name.delete()
+                if product:
+                    form = ProductForm(initial={'product': product})
+                    display_names = DisplayName.objects.filter(product=product)
+        return render(request, 'display_names.html', {'form': form, 'display_names': display_names})
+    else:
+        redirect('/')
 
 @login_required
 def home(request):
@@ -197,6 +227,18 @@ class ProductAutocomplete(autocomplete.Select2QuerySetView):
                 qs = qs.filter(name__icontains=s) | qs.filter(product__fabrikantnaam__icontains=s)
 
         return qs.order_by('-product__occurrence')
+
+class ProductIdAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Product.objects.none()
+        qs = Product.objects.all()
+        if self.q and len(self.q)>0:
+            if any(char.isdigit() for char in self.q):
+                qs = qs.filter(id=self.q)
+            else:
+                qs = qs.filter(product_omschrijving__icontains=self.q)
+        return qs.only('id')
 
 class MeasurementAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
