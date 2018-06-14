@@ -33,7 +33,24 @@
             </div>
         </form>
     {% endfor %}
+    <form method="post">
 
+        {% csrf_token %}
+        <label for="add_display_names">Add New Display Name</label>
+        <input name="add_display_name_id" id="add_display_name_id" type="hidden" required>
+        <div class="form-group">
+            <div class="input-group">
+                <input class="form-control" name="add_display_name" type="text" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-success">
+                <span class="glyphicon glyphicon-ok"></span> Add New Display Name
+            </button>
+        </div>
+    </form>
 </div>
-
+<script>
+    document.getElementById("add_display_name_id").value = document.getElementById("id_product").value;
+</script>
 {% endblock %}

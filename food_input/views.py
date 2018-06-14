@@ -36,6 +36,15 @@ def update_display_names(request):
                     display_name.save()
                     form = ProductForm(initial={'product': display_name.product})
                     display_names = DisplayName.objects.filter(product=display_name.product)
+            elif request.POST.get('add_display_name_id'):
+                product = Product.objects.filter(id=request.POST.get('add_display_name_id')).first()
+                if product:
+                    DisplayName.objects.create(name=request.POST.get('add_display_name'),
+                                                              product=product,
+                                                              creator=request.user)
+                    form = ProductForm(initial={'product': product})
+                    display_names = DisplayName.objects.filter(product=product)
+
         elif request.method == 'GET':
             display_name = DisplayName.objects.filter(id=request.GET.get('display_name')).first()
             if display_name:
