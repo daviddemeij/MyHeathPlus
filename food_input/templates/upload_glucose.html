@@ -1,27 +1,79 @@
 {% extends 'base.html'%}
 
 {% block content %}
+{% load widget_tweaks %}
+{{ form.media }}
 <div class="container">
-<form method="post" enctype="multipart/form-data">{% csrf_token %}
-    <div class="mb3">
-        <div class="form-group">
-            {% if user.is_staff %}
-                <label for="patient_id">Patient ID</label>
-                <input type="number" name="patient_id" step="1" class="form-control" required id="id_patient_id">
-            {% else %}
-                <input type="hidden" name="patient_id" required_id="id_patient_id" value="{{ user.id }}">
-            {% endif %}
-        </div>
-        <div class="form-group">
-            <label for="glucose_file">Glucose File</label>
-            <input class="form-control" type="file" name="csv_file" />
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-success">
-                <span class="glyphicon glyphicon-ok"></span> Upload
-            </button>
-        </div>
+    <div class="row">
+        <h2>Upload Glucose File</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="glucose_file">Glucose Export file</label>
+                <input class="form-control" type="file" name="csv_file" />
+                <span class="help-block">Currently we only support the glucose files exported from the Freestyle Libre.
+                To export your Freestyle Libre data download the <a href="https://www.freestylelibre.nl/help/products/software.html">
+                        Freestyle Libre software</a>, plug-in your reader and go to "File -> Export".</span>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">
+                    <span class="glyphicon glyphicon-upload"></span> Upload
+                </button>
+            </div>
+        </form>
     </div>
-</form>
+    <div class="row">
+        <h2>Add Manual Glucose Measurements</h2>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+            {% for field in form.visible_fields %}
+                      <div class="form-group">
+                        <label for='{{ field.id_for_label }}'>{{ field.label }}</label>
+                        {{ field|add_class:'form-control' }}
+                        {% for error in field.errors %}
+                          <span class="help-block">{{ error }}</span>
+                        {% endfor %}
+                      </div>
+            {% endfor %}
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">
+                <span class="glyphicon glyphicon-ok"></span> Save
+            </button>
+            </div>
+            </div>
+
+        </form>
+    </div>
+    <div class="row">
+        <form method="get">
+            <div class="form-group">
+                <label for="select_date">Geselecteerde datum</label>
+                <select onchange="this.form.submit()" name="select_date" class="form-control" id="id_select_date">
+                    {% for date in date_list %}
+                         <option {% ifequal selected_date date %} selected {% endifequal %}
+                                 value="{{ date|date:'Y-m-d' }}">{{ date }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+            {% load static %}
+            <script src="{% static 'js/Chart.min.js' %}"></script>
+
+        <canvas id="chartjs-0" class="chartjs" width="379" height="189" style="display: block; width: 379px; height: 189px;"></canvas>
+        <script>
+            new Chart(document.getElementById("chartjs-0"),
+                {"type":"line",
+                "data":
+                    {"labels":[{% for glucose_value in glucose_values %}"{{ glucose_value.datetime|date:'H:i' }}",{% endfor %}],
+                    "datasets": [{"label":"Blood Glucose",
+                        "data":[{% for glucose_value in glucose_values %}"{{ glucose_value.glucose_value }}",{% endfor %}],
+                        "fill":false,
+                        "borderColor":"rgb(51, 187, 255)",
+                        "lineTension":0.1}]},
+                    "options":{
+                    "legend": {"display": false}
+            }});</script>
+    </div>
 </div>
 {% endblock %}
