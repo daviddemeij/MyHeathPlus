@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import FoodRecordForm, CopyMealForm
+from .forms import FoodRecordForm, CopyMealForm, GlucoseValueForm
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required
 from .models import FoodRecord, Measurement, Product, DisplayName, GlucoseValue
@@ -233,23 +233,53 @@ class MeasurementAutocomplete(autocomplete.Select2QuerySetView):
 
 @login_required()
 def upload_glucose(request):
-    if request.POST and request.FILES and request.POST.get('patient_id'):
-        patient_id = convert_int(request.POST.get('patient_id'))
-        csvfile = request.FILES['csv_file']
-        i=0
-        for row in csvfile:
-            row_decoded = row.decode("utf-8").split("\t")
-            if len(row_decoded) >= 3:
-                date = convert_datetime(row_decoded[1])
-                glucose = convert_float(row_decoded[3])
-                if date and glucose > 0.0 and patient_id:
-                    existing_object = GlucoseValue.objects.filter(patient_id=patient_id).filter(
-                        datetime=date).first()
-                    if existing_object:
-                        print("Duplicate glucose value " + str(glucose) + " for patient " + str(patient_id) +
-                              " at " + str(datetime))
-                    else:
-                        GlucoseValue.objects.create(datetime=date, glucose_value=glucose,
-                                                    patient_id=patient_id, creator=request.user)
+    if request.POST:
+        if request.FILES and request.POST.get('patient_id'):
+            csvfile = request.FILES['csv_file']
+            for row in csvfile:
+                row_decoded = row.decode("utf-8").split("\t")
+                if len(row_decoded) >= 3:
+                    date, glucose = convert_datetime(row_decoded[1]), convert_float(row_decoded[3])
+                    if date and glucose > 0.0:
+                        existing_object = GlucoseValue.objects.filter(patient_id=request.user.id).filter(
+                            datetime=date).first()
+                        if not existing_object:
+                            GlucoseValue.objects.create(datetime=date, glucose_value=glucose,
+                                                        patient_id=request.user.id, creator=request.user)
+        elif request.POST.get("datum") and request.POST.get("tijd") and request.POST.get("glucose_value"):
+            datum = datetime.datetime.strptime(request.POST.get('datum'), '%Y-%m-%d')
+            tijd = datetime.datetime.strptime(request.POST.get('tijd'), '%H:%M')
+            date = datum.replace(hour=tijd.hour, minute=tijd.minute)
 
-    return render(request, "upload_glucose.html")
+            existing_object = GlucoseValue.objects.filter(patient_id=request.user.id).filter(datetime=date).first()
+            if not existing_object:
+                GlucoseValue.objects.create(datetime=date, glucose_value=request.POST.get("glucose_value"),
+                                            patient_id=request.user.id, creator=request.user)
+
+            print(request.POST.get("datum"), request.POST.get("tijd"), request.POST.get("glucose_value"))
+
+    last_glucose_value = GlucoseValue.objects.all().filter(creator=request.user).order_by('datetime').first()
+    initial_date = datetime.datetime.now().date()
+    initial_time = datetime.datetime.now().time()
+    if last_glucose_value:
+        initial_date = last_glucose_value.datetime.date()
+        initial_time = (last_glucose_value.datetime + datetime.timedelta(0,1800)).time()
+
+    if request.GET and request.GET.get("select_date"):
+        initial_date = datetime.datetime.strptime(request.GET.get("select_date"), '%Y-%m-%d').date()
+    form = GlucoseValueForm(initial={"datum": initial_date, 'tijd': initial_time})
+
+    glucose_values = GlucoseValue.objects.all().filter(creator=request.user).order_by('datetime')
+    dates = glucose_values.order_by('datetime').values("datetime").distinct()
+    glucose_values = glucose_values.filter(
+        datetime__year=initial_date.year,
+        datetime__month=initial_date.month,
+        datetime__day=initial_date.day)
+
+    date_list = []
+    for date in dates:
+        if date["datetime"].date() not in date_list:
+            date_list.append(date["datetime"].date())
+
+    return render(request, "upload_glucose.html", {'form': form, 'glucose_values': glucose_values,
+                                                   "selected_date": initial_date, "date_list": date_list})

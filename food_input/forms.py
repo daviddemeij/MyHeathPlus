@@ -1,5 +1,5 @@
 from django import forms
-from .models import FoodRecord, Product, Measurement
+from .models import FoodRecord, GlucoseValue, Measurement
 from dal import autocomplete
 from datetimewidget.widgets import DateWidget, TimeWidget
 from django.utils.translation import ugettext_lazy as _
@@ -60,6 +60,20 @@ class MeasurementForm(forms.ModelForm):
     class Meta:
         model = Measurement
         fields = ['name', 'amount', 'linked_product']
+
+class GlucoseValueForm(forms.ModelForm):
+    datum = forms.DateField(
+        widget=DateWidget(attrs={'id': "id_datum", "autocomplete": "off"}, usel10n=True, bootstrap_version=3)
+    )
+    tijd = forms.TimeField(
+        widget=TimeWidget(attrs={'id': "id_tijd", "autocomplete": "off"}, usel10n=False, bootstrap_version=3, options={'format': 'hh:ii'})
+    )
+    class Meta:
+        model = GlucoseValue
+        fields = ['datum', 'tijd', 'glucose_value']
+        widgets = {
+            'glucose_value': forms.NumberInput(attrs={'step': "0.1"})
+        }
 
 class CopyMealForm(forms.Form):
     copy_date = forms.DateField(
