@@ -258,7 +258,7 @@ def upload_glucose(request):
 
             print(request.POST.get("datum"), request.POST.get("tijd"), request.POST.get("glucose_value"))
 
-    last_glucose_value = GlucoseValue.objects.all().filter(creator=request.user).order_by('datetime').first()
+    last_glucose_value = GlucoseValue.objects.all().filter(creator=request.user).order_by('datetime').last()
     initial_date = datetime.datetime.now().date()
     initial_time = datetime.datetime.now().time()
     if last_glucose_value:
