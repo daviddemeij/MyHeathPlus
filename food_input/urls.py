@@ -1,9 +1,11 @@
-from django.conf.urls import url, include
+from django.conf.urls import url
 from django.urls import path
 from . import views
 from . import api
 from .actions import count_occurrence
 from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
+
+
 print("Counting occurrence!")
 count_occurrence()
 
@@ -26,5 +28,5 @@ urlpatterns = [path('', views.home),
                url('api/measurements/', api.measurement_list),
                url('api/products/', api.product_list),
                url('upload_glucose/', views.upload_glucose, name='upload_glucose'),
-
+               url('profile', views.profile, name='profile')
                ]
