@@ -26,6 +26,10 @@ def home(request):
     return render(request, 'home.html', {'form': form})
 
 @login_required
+def profile(request):
+    return render(request, 'profile.html')
+
+@login_required
 def count(request):
     if request.user.is_staff:
         occurrence_list = count_occurrence()
