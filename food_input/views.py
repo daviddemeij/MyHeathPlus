@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import FoodRecordForm, CopyMealForm, GlucoseValueForm
+from .forms import FoodRecordForm, CopyMealForm, GlucoseValueForm, UserCreationForm
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required
 from .models import FoodRecord, Measurement, Product, DisplayName, GlucoseValue
@@ -7,7 +7,6 @@ from .actions import count_occurrence, convert_int, convert_float, convert_time,
     select_date_patient, copy_food_record, calculate_nutrition, convert_datetime
 import datetime
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
 
 def privacy_policy(request):
     return render(request, 'privacy_policy.html')

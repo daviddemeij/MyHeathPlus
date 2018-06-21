@@ -1,8 +1,9 @@
 from django import forms
-from .models import FoodRecord, GlucoseValue, Measurement
+from .models import FoodRecord, GlucoseValue, Measurement, User
 from dal import autocomplete
 from datetimewidget.widgets import DateWidget, TimeWidget
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.auth.forms import UserCreationForm
 
 CATEGORIES = (("<geen categorie>", "<geen categorie>"),
               ("Aardappelen", "Aardappelen"),
@@ -79,3 +80,18 @@ class CopyMealForm(forms.Form):
     copy_date = forms.DateField(
         widget=DateWidget(attrs={'id': "copy_date", "autocomplete": "off"}, usel10n=True, bootstrap_version=3)
     )
+
+class UserCreationForm(UserCreationForm):
+    email = forms.EmailField(label=_("Email address"), required=True,
+        help_text=_("Required."))
+
+    class Meta:
+        model = User
+        fields = ("username", "email", "password1", "password2")
+
+    def save(self, commit=True):
+        user = super(UserCreationForm, self).save(commit=False)
+        user.email = self.cleaned_data["email"]
+        if commit:
+            user.save()
+        return user
