@@ -1,10 +1,57 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'base.html'%}
+
+{% block content %}
+{{ form.media }}
+
+  {% load widget_tweaks %}
+<div class="container">
+    <div class="row">
+     <form method="post">
+        {% csrf_token %}
+         {% for field in form.visible_fields %}
+        <div class="form-group">
+            <label for='{{ field.id_for_label }}'>{{ field.label }}</label>
+            {{ field|attr:'onchange:this.form.submit()'|add_class:'form-control' }}
+            {% for error in field.errors %}
+              <span class="help-block">{{ error }}</span>
+            {% endfor %}
+        </div>
+         {% endfor %}
+     </form>
+
+
+        <label for="display_names">Display Names</label>
+        {% for display_name in display_names %}
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="input-group">
+                        <input name="display_name_id" type="hidden" value="{{ display_name.id }}">
+                        <input name="display_name_update" class="form-control" type="text" value="{{ display_name.name }}" onchange="this.form.submit()">
+                        <span class="input-group-addon" id="start-date"><a href="/display_names/?display_name={{ display_name.id }}"><span class="glyphicon glyphicon-remove"></span></a></span>
+                    </div>
+                </div>
+            </form>
+        {% endfor %}
+        <form method="post">
+
+            {% csrf_token %}
+            <label for="add_display_names">Add New Display Name</label>
+            <input name="add_display_name_id" id="add_display_name_id" type="hidden" required>
+            <div class="form-group">
+                <div class="input-group">
+                    <input class="form-control" name="add_display_name" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">
+                    <span class="glyphicon glyphicon-ok"></span> Add New Display Name
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    document.getElementById("add_display_name_id").value = document.getElementById("id_product").value;
+</script>
+{% endblock %}
