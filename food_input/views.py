@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import FoodRecordForm, CopyMealForm, GlucoseValueForm, UserCreationForm
+from .forms import FoodRecordForm, CopyMealForm, GlucoseValueForm, UserCreationForm, ProductForm
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required
 from .models import FoodRecord, Measurement, Product, DisplayName, GlucoseValue
@@ -39,6 +39,7 @@ def count(request):
 
 @login_required
 def update_display_names(request):
+    print("test1")
     if request.user.is_staff:
         form = ProductForm()
         display_names = []
@@ -72,9 +73,10 @@ def update_display_names(request):
                 if product:
                     form = ProductForm(initial={'product': product})
                     display_names = DisplayName.objects.filter(product=product)
-        return render(request, 'display_names.html', {'form': form, 'display_names': display_names})
+        print("test")
+        return render(request, 'display.html', {'form': form, 'display_names': display_names})
     else:
-        redirect('/')
+        return redirect('/')
 
 
 @login_required
