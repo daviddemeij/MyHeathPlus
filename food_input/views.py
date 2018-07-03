@@ -38,6 +38,46 @@ def count(request):
         return redirect('/')
 
 @login_required
+def update_display_names(request):
+    if request.user.is_staff:
+        form = ProductForm()
+        display_names = []
+        if request.method == 'POST':
+            if request.POST.get('product'):
+                form = ProductForm(request.POST)
+                product = Product.objects.filter(id=request.POST.get('product')).first()
+                if product:
+                    display_names = DisplayName.objects.filter(product=product)
+            elif request.POST.get('display_name_update'):
+                display_name = DisplayName.objects.filter(id=request.POST.get('display_name_id')).first()
+                if display_name:
+                    display_name.name = request.POST.get('display_name_update')
+                    display_name.save()
+                    form = ProductForm(initial={'product': display_name.product})
+                    display_names = DisplayName.objects.filter(product=display_name.product)
+            elif request.POST.get('add_display_name_id'):
+                product = Product.objects.filter(id=request.POST.get('add_display_name_id')).first()
+                if product:
+                    DisplayName.objects.create(name=request.POST.get('add_display_name'),
+                                                              product=product,
+                                                              creator=request.user)
+                    form = ProductForm(initial={'product': product})
+                    display_names = DisplayName.objects.filter(product=product)
+
+        elif request.method == 'GET':
+            display_name = DisplayName.objects.filter(id=request.GET.get('display_name')).first()
+            if display_name:
+                product = display_name.product
+                display_name.delete()
+                if product:
+                    form = ProductForm(initial={'product': product})
+                    display_names = DisplayName.objects.filter(product=product)
+        return render(request, 'display_names.html', {'form': form, 'display_names': display_names})
+    else:
+        redirect('/')
+
+
+@login_required
 def foodlog(request):
     print("ID = ", request.user.id)
     if request.method == 'GET' and convert_int(request.GET.get('copy')):
