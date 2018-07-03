@@ -1,5 +1,5 @@
 from django import forms
-from .models import FoodRecord, GlucoseValue, Measurement, User
+from .models import FoodRecord, GlucoseValue, Measurement, User, Product
 from dal import autocomplete
 from datetimewidget.widgets import DateWidget, TimeWidget
 from django.utils.translation import ugettext_lazy as _
@@ -95,3 +95,7 @@ class UserCreationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+class ProductForm(forms.Form):
+    product = forms.ModelChoiceField(queryset=Product.objects.all(),
+                                     widget=autocomplete.ModelSelect2(url='product-id-autocomplete'))
