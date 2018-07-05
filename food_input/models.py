@@ -201,7 +201,7 @@ class FoodRecord(models.Model):
     datetime = models.DateTimeField()
     missing_time = models.BooleanField(default=False)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
-    display_name = models.ForeignKey(DisplayName, on_delete=models.PROTECT, blank=True, null=True)
+    display_name = models.ForeignKey(DisplayName, on_delete=models.SET_NULL, blank=True, null=True)
     amount = models.FloatField()
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=False)
     created_at = models.DateTimeField(default=dt.datetime.now)
