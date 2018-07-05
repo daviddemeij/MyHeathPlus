@@ -193,6 +193,7 @@ def calculate_nutrition(instance):
             if nutrition_value:
                 if "sp" in nutrition_value:
                     nutrition_value = 0.0
+                ## TODO fix calculation of nutrition fields that use % as amount.
                 setattr(instance, field,
                         float(nutrition_value) * (instance.amount / float(instance.product.hoeveelheid)))
     return instance

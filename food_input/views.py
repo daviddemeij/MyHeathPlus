@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import FoodRecordForm, CopyMealForm, GlucoseValueForm, UserCreationForm, ProductForm
+from .forms import FoodRecordForm, CopyMealForm, GlucoseValueForm, UserCreationForm, SelectProductForm, ProductForm
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required
 from .models import FoodRecord, Measurement, Product, DisplayName, GlucoseValue
@@ -38,14 +38,18 @@ def count(request):
         return redirect('/')
 
 @login_required
+def add_product(request):
+    product_form = ProductForm()
+    return render(request, 'product.html', {'product_form': product_form})
+
+@login_required
 def update_display_names(request):
-    print("test1")
     if request.user.is_staff:
-        form = ProductForm()
+        form = SelectProductForm()
         display_names = []
         if request.method == 'POST':
             if request.POST.get('product'):
-                form = ProductForm(request.POST)
+                form = SelectProductForm(request.POST)
                 product = Product.objects.filter(id=request.POST.get('product')).first()
                 if product:
                     display_names = DisplayName.objects.filter(product=product)
@@ -54,7 +58,7 @@ def update_display_names(request):
                 if display_name:
                     display_name.name = request.POST.get('display_name_update')
                     display_name.save()
-                    form = ProductForm(initial={'product': display_name.product})
+                    form = SelectProductForm(initial={'product': display_name.product})
                     display_names = DisplayName.objects.filter(product=display_name.product)
             elif request.POST.get('add_display_name_id'):
                 product = Product.objects.filter(id=request.POST.get('add_display_name_id')).first()
@@ -62,7 +66,7 @@ def update_display_names(request):
                     DisplayName.objects.create(name=request.POST.get('add_display_name'),
                                                               product=product,
                                                               creator=request.user)
-                    form = ProductForm(initial={'product': product})
+                    form = SelectProductForm(initial={'product': product})
                     display_names = DisplayName.objects.filter(product=product)
 
         elif request.method == 'GET':
@@ -71,9 +75,8 @@ def update_display_names(request):
                 product = display_name.product
                 display_name.delete()
                 if product:
-                    form = ProductForm(initial={'product': product})
+                    form = SelectProductForm(initial={'product': product})
                     display_names = DisplayName.objects.filter(product=product)
-        print("test")
         return render(request, 'display.html', {'form': form, 'display_names': display_names})
     else:
         return redirect('/')
@@ -328,3 +331,15 @@ def upload_glucose(request):
 
     return render(request, "upload_glucose.html", {'form': form, 'glucose_values': glucose_values,
                                                    "selected_date": initial_date, "date_list": date_list})
+
+class ProductIdAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Product.objects.none()
+        qs = Product.objects.all()
+        if self.q and len(self.q)>0:
+            if any(char.isdigit() for char in self.q):
+                qs = qs.filter(id=self.q)
+            else:
+                qs = qs.filter(product_omschrijving__icontains=self.q)
+        return qs.only('id')
