@@ -7,7 +7,7 @@ from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 
 
 print("Counting occurrence!")
-count_occurrence()
+#count_occurrence()
 
 urlpatterns = [path('', views.home),
                path('privacy_policy/', views.privacy_policy),
