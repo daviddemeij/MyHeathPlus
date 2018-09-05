@@ -199,9 +199,12 @@ def calculate_nutrition(instance):
     return instance
 
 
-def calculate_all_ratings():
+def calculate_all_ratings(patient=None):
     ratings = []
-    for food_record_obj in FoodRecord.objects.all():
+    food_record_objects = FoodRecord.objects.all()
+    if patient:
+        food_record_objects = food_record_objects.filter(creator=patient)
+    for food_record_obj in food_record_objects:
         rating = calculate_rating(food_record_obj)
         if rating:
             ratings.append((food_record_obj, rating))
