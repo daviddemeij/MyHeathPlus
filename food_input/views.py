@@ -295,9 +295,12 @@ class MeasurementAutocomplete(autocomplete.Select2QuerySetView):
 @login_required()
 def upload_glucose(request):
     if request.POST:
-        if request.FILES and request.POST.get('patient_id'):
+        print(request.POST.get('patient_id'))
+        if request.FILES:
             csvfile = request.FILES['csv_file']
+            print(csvfile)
             for row in csvfile:
+                print(row)
                 row_decoded = row.decode("utf-8").split("\t")
                 if len(row_decoded) >= 3:
                     date, glucose = convert_datetime(row_decoded[1]), convert_float(row_decoded[3])
