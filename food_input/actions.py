@@ -1,7 +1,7 @@
 import unicodecsv
 from django.http import HttpResponse
 from .models import Product, FoodRecord, DisplayName, Measurement, GlucoseValue
-from collections import OrderedDict
+from collections import defaultdict, OrderedDict
 import datetime
 
 def export_as_csv_action(description="Export selected objects as CSV file",
