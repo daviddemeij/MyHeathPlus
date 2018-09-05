@@ -4,12 +4,9 @@ from dal import autocomplete
 from django.contrib.auth.decorators import login_required
 from .models import FoodRecord, Measurement, Product, DisplayName, GlucoseValue
 from .actions import count_occurrence, convert_int, convert_float, convert_time, group_food_records, \
-    select_date_patient, copy_food_record, calculate_nutrition, convert_datetime
+    select_date_patient, copy_food_record, calculate_nutrition, convert_datetime, calculate_all_ratings
 import datetime
 from django.contrib.auth import login, authenticate
-
-def privacy_policy(request):
-    return render(request, 'privacy_policy.html')
 
 def home(request):
     if request.method == 'POST':
@@ -24,6 +21,19 @@ def home(request):
     else:
         form = UserCreationForm()
     return render(request, 'home.html', {'form': form})
+
+@login_required
+def calculate_food_ratings(request):
+    if request.user.is_staff:
+        ratings = calculate_all_ratings()
+        return render(request, 'food_ratings.html', {"ratings": ratings})
+    else:
+        return redirect('/')
+
+
+def privacy_policy(request):
+    return render(request, 'privacy_policy.html')
+
 
 @login_required
 def profile(request):

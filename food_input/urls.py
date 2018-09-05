@@ -27,5 +27,6 @@ urlpatterns = [path('', views.home),
                url('upload_glucose/', views.upload_glucose, name='upload_glucose'),
                url('profile', views.profile, name='profile'),
                url('display_names/', views.update_display_names, name="update_display_names"),
-               url('add_product', views.add_product, name="add_product")
+               url('add_product', views.add_product, name="add_product"),
+               url('calculate_food_ratings', views.calculate_food_ratings, name="calculate_food_ratings")
                ]
