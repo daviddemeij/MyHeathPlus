@@ -211,6 +211,8 @@ def calculate_rating(food_record_obj):
     user = food_record_obj.creator
     glucose_objects = GlucoseValue.objects.filter(creator=user)
     rating = None
+    print("Calculate rating for: ", str(food_record_obj))
+    food_record_obj.rating = None
     if glucose_objects:
         mean_glucose = sum(glucose_obj.glucose_value for glucose_obj in glucose_objects) / len(glucose_objects)
         date = food_record_obj.datetime
@@ -226,7 +228,9 @@ def calculate_rating(food_record_obj):
                 for glucose_obj in glucose_objects_range:
                     glucoses.append(glucose_obj.glucose_value)
                 corrected_glucose = [g - initial_glucose for g in glucoses if g > initial_glucose]
-                auc = sum(corrected_glucose) / len(corrected_glucose)
-                rating = int((1 - (auc / mean_glucose)) * 10)
-                print(food_record_obj, rating)
+                if len(corrected_glucose) > 0:
+                    auc = sum(corrected_glucose) / len(corrected_glucose)
+                    rating = int((1 - (auc / mean_glucose)) * 10)
+                    food_record_obj.rating = rating
+    food_record_obj.save()
     return rating

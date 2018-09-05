@@ -4,7 +4,7 @@ from dal import autocomplete
 from django.contrib.auth.decorators import login_required
 from .models import FoodRecord, Measurement, Product, DisplayName, GlucoseValue
 from .actions import count_occurrence, convert_int, convert_float, convert_time, group_food_records, \
-    select_date_patient, copy_food_record, calculate_nutrition, convert_datetime, calculate_all_ratings
+    select_date_patient, copy_food_record, calculate_nutrition, convert_datetime, calculate_all_ratings, calculate_rating
 import datetime
 from django.contrib.auth import login, authenticate
 
@@ -122,6 +122,7 @@ def foodlog(request):
                         food_record.missing_time = False
                         food_record.datetime = food_record.datetime.replace(hour=update_time.hour, minute=update_time.minute)
                 food_record.save()
+                calculate_rating(food_record)
             form = FoodRecordForm()
         elif request.POST.get('copy_date'):
             form = FoodRecordForm()
@@ -139,6 +140,7 @@ def foodlog(request):
                     print("foodrecord already exists")
                 else:
                     record.save()
+                    calculate_rating(record)
         else:
             form = FoodRecordForm(request.POST)
             # Process form
@@ -197,6 +199,7 @@ def foodlog(request):
                     product.occurrence += 1
                     product.save()
                     instance.save()
+                    calculate_rating(instance)
             else:
                 print("input is not valid!")
     else:
