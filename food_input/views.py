@@ -310,6 +310,7 @@ def upload_glucose(request):
                         if not existing_object:
                             GlucoseValue.objects.create(datetime=date, glucose_value=glucose,
                                                         patient_id=request.user.id, creator=request.user)
+            calculate_all_ratings(patient=request.user)
         elif request.POST.get("datum") and request.POST.get("tijd") and request.POST.get("glucose_value"):
             datum = datetime.datetime.strptime(request.POST.get('datum'), '%Y-%m-%d')
             tijd = datetime.datetime.strptime(request.POST.get('tijd'), '%H:%M')
