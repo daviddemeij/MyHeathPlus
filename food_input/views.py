@@ -8,9 +8,6 @@ from .actions import count_occurrence, convert_int, convert_float, convert_time,
 import datetime
 from django.contrib.auth import login, authenticate
 
-def privacy_policy(request):
-    return render(request, 'privacy_policy.html')
-
 def home(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -25,14 +22,18 @@ def home(request):
         form = UserCreationForm()
     return render(request, 'home.html', {'form': form})
 
-
 @login_required
-def calculate_food_scores(request):
+def calculate_food_ratings(request):
     if request.user.is_staff:
         ratings = calculate_all_ratings()
-        return render(request, 'food_scores.html', {"ratings": ratings})
+        return render(request, 'food_ratings.html', {"ratings": ratings})
     else:
         return redirect('/')
+
+
+def privacy_policy(request):
+    return render(request, 'privacy_policy.html')
+
 
 @login_required
 def profile(request):

@@ -5,4 +5,5 @@ django-widget-tweaks
 django-jquery
 six
 unicodecsv
+djangorestframework
 djangorestframework-jwt

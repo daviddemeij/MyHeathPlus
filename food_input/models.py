@@ -25,7 +25,6 @@ class Product(models.Model):
     eetbaar_gedeelte = models.TextField(db_column='Eetbaar_gedeelte', blank=True, null=True)  # Field name made lowercase.
     vertrouwelijk_code = models.TextField(db_column='Vertrouwelijk_code', blank=True, null=True)  # Field name made lowercase.
     commentaarregel = models.TextField(db_column='Commentaarregel', blank=True, null=True)  # Field name made lowercase.
-
     field_01001 = models.TextField(db_column='_01001', blank=True, null=True, verbose_name="Energy (kcal)")
     field_01002 = models.TextField(db_column='_01002', blank=True, null=True, verbose_name="Energy (kJ)")
     field_02001 = models.TextField(db_column='_02001', blank=True, null=True, verbose_name="Nitrogen total (g)")
@@ -161,7 +160,6 @@ class Product(models.Model):
     field_11038 = models.TextField(db_column='_11038', blank=True, null=True)
     field_11046 = models.TextField(db_column='_11046', blank=True, null=True)
     field_12001 = models.TextField(db_column='_12001', blank=True, null=True)
-
     field_13006 = models.TextField(db_column='_13006', blank=True, null=True)
     is_nevo = models.BooleanField(default=True, blank=False, null=False)
 
