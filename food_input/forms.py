@@ -1,5 +1,5 @@
 from django import forms
-from .models import FoodRecord, GlucoseValue, Measurement, User
+from .models import FoodRecord, GlucoseValue, Measurement, User, Product
 from dal import autocomplete
 from datetimewidget.widgets import DateWidget, TimeWidget
 from django.utils.translation import ugettext_lazy as _
@@ -31,6 +31,7 @@ CATEGORIES = (("<geen categorie>", "<geen categorie>"),
               ("Soepen", "Soepen")
               )
 
+
 class FoodRecordForm(forms.ModelForm):
     categorie = forms.ChoiceField(choices=CATEGORIES)
     eenheid = forms.ModelChoiceField(
@@ -43,11 +44,14 @@ class FoodRecordForm(forms.ModelForm):
         widget=DateWidget(attrs={'id': "id_datum", "autocomplete": "off"}, usel10n=True, bootstrap_version=3)
     )
     tijd = forms.TimeField(
-        widget=TimeWidget(attrs={'id': "id_tijd", "autocomplete": "off"}, usel10n=False, bootstrap_version=3, options={'format': 'hh:ii'})
+        widget=TimeWidget(attrs={'id': "id_tijd", "autocomplete": "off"}, usel10n=False, bootstrap_version=3,
+                          options={'format': 'hh:ii'})
     )
+
     class Meta:
         model = FoodRecord
-        fields = ['patient_id', 'datum', 'tijd', 'missing_time', 'categorie', 'display_name', 'eenheid', 'koppel_eenheid_aan_alle_producten_binnen_deze_categorie', 'aantal_eenheden']
+        fields = ['patient_id', 'datum', 'tijd', 'missing_time', 'categorie', 'display_name', 'eenheid',
+                  'koppel_eenheid_aan_alle_producten_binnen_deze_categorie', 'aantal_eenheden']
         widgets = {
             'display_name': autocomplete.ModelSelect2(url='product-autocomplete', forward=['categorie']),
 
@@ -57,18 +61,22 @@ class FoodRecordForm(forms.ModelForm):
                   'display_name': _('Product'),
                   'missing_time': _('Tijd Onbekend')}
 
+
 class MeasurementForm(forms.ModelForm):
     class Meta:
         model = Measurement
         fields = ['name', 'amount', 'linked_product']
+
 
 class GlucoseValueForm(forms.ModelForm):
     datum = forms.DateField(
         widget=DateWidget(attrs={'id': "id_datum", "autocomplete": "off"}, usel10n=True, bootstrap_version=3)
     )
     tijd = forms.TimeField(
-        widget=TimeWidget(attrs={'id': "id_tijd", "autocomplete": "off"}, usel10n=False, bootstrap_version=3, options={'format': 'hh:ii'})
+        widget=TimeWidget(attrs={'id': "id_tijd", "autocomplete": "off"}, usel10n=False, bootstrap_version=3,
+                          options={'format': 'hh:ii'})
     )
+
     class Meta:
         model = GlucoseValue
         fields = ['datum', 'tijd', 'glucose_value']
@@ -76,14 +84,16 @@ class GlucoseValueForm(forms.ModelForm):
             'glucose_value': forms.NumberInput(attrs={'step': "0.1"})
         }
 
+
 class CopyMealForm(forms.Form):
     copy_date = forms.DateField(
         widget=DateWidget(attrs={'id': "copy_date", "autocomplete": "off"}, usel10n=True, bootstrap_version=3)
     )
 
+
 class UserCreationForm(UserCreationForm):
     email = forms.EmailField(label=_("Email address"), required=True,
-        help_text=_("Required."))
+                             help_text=_("Required."))
 
     class Meta:
         model = User
@@ -95,3 +105,28 @@ class UserCreationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class SelectProductForm(forms.Form):
+    product = forms.ModelChoiceField(queryset=Product.objects.all(),
+                                     widget=autocomplete.ModelSelect2(url='product-id-autocomplete'))
+
+
+class ProductForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ProductForm, self).__init__(*args, **kwargs)
+        delete = []
+        for field_name, field in self.fields.items():
+            if field:
+                if field.label.startswith("Field"):
+                    delete.append(field_name)
+        for field_name in delete:
+                del self.fields[field_name]
+        self.fields['productgroep_oms'] = forms.ChoiceField(choices=CATEGORIES)
+    #productgroep_oms = forms.ChoiceField(choices=CATEGORIES)
+    class Meta:
+        model = Product
+        exclude = ("id", "occurrence", "is_nevo")
+        widgets = {
+
+        }

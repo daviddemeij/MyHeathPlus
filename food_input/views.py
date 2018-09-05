@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
-from .forms import FoodRecordForm, CopyMealForm, GlucoseValueForm, UserCreationForm
+from .forms import FoodRecordForm, CopyMealForm, GlucoseValueForm, UserCreationForm, SelectProductForm, ProductForm
 from dal import autocomplete
 from django.contrib.auth.decorators import login_required
 from .models import FoodRecord, Measurement, Product, DisplayName, GlucoseValue
 from .actions import count_occurrence, convert_int, convert_float, convert_time, group_food_records, \
-    select_date_patient, copy_food_record, calculate_nutrition, convert_datetime
+    select_date_patient, copy_food_record, calculate_nutrition, convert_datetime, calculate_all_ratings
 import datetime
 from django.contrib.auth import login, authenticate
 
@@ -25,6 +25,15 @@ def home(request):
         form = UserCreationForm()
     return render(request, 'home.html', {'form': form})
 
+
+@login_required
+def calculate_food_scores(request):
+    if request.user.is_staff:
+        ratings = calculate_all_ratings()
+        return render(request, 'food_scores.html', {"ratings": ratings})
+    else:
+        return redirect('/')
+
 @login_required
 def profile(request):
     return render(request, 'profile.html')
@@ -36,6 +45,51 @@ def count(request):
         return render(request, 'count.html', {'occurrence_list': occurrence_list})
     else:
         return redirect('/')
+
+@login_required
+def add_product(request):
+    product_form = ProductForm()
+    return render(request, 'product.html', {'product_form': product_form})
+
+@login_required
+def update_display_names(request):
+    if request.user.is_staff:
+        form = SelectProductForm()
+        display_names = []
+        if request.method == 'POST':
+            if request.POST.get('product'):
+                form = SelectProductForm(request.POST)
+                product = Product.objects.filter(id=request.POST.get('product')).first()
+                if product:
+                    display_names = DisplayName.objects.filter(product=product)
+            elif request.POST.get('display_name_update'):
+                display_name = DisplayName.objects.filter(id=request.POST.get('display_name_id')).first()
+                if display_name:
+                    display_name.name = request.POST.get('display_name_update')
+                    display_name.save()
+                    form = SelectProductForm(initial={'product': display_name.product})
+                    display_names = DisplayName.objects.filter(product=display_name.product)
+            elif request.POST.get('add_display_name_id'):
+                product = Product.objects.filter(id=request.POST.get('add_display_name_id')).first()
+                if product:
+                    DisplayName.objects.create(name=request.POST.get('add_display_name'),
+                                                              product=product,
+                                                              creator=request.user)
+                    form = SelectProductForm(initial={'product': product})
+                    display_names = DisplayName.objects.filter(product=product)
+
+        elif request.method == 'GET':
+            display_name = DisplayName.objects.filter(id=request.GET.get('display_name')).first()
+            if display_name:
+                product = display_name.product
+                display_name.delete()
+                if product:
+                    form = SelectProductForm(initial={'product': product})
+                    display_names = DisplayName.objects.filter(product=product)
+        return render(request, 'display.html', {'form': form, 'display_names': display_names})
+    else:
+        return redirect('/')
+
 
 @login_required
 def foodlog(request):
@@ -286,3 +340,15 @@ def upload_glucose(request):
 
     return render(request, "upload_glucose.html", {'form': form, 'glucose_values': glucose_values,
                                                    "selected_date": initial_date, "date_list": date_list})
+
+class ProductIdAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Product.objects.none()
+        qs = Product.objects.all()
+        if self.q and len(self.q)>0:
+            if any(char.isdigit() for char in self.q):
+                qs = qs.filter(id=self.q)
+            else:
+                qs = qs.filter(product_omschrijving__icontains=self.q)
+        return qs.only('id')

@@ -1,7 +1,7 @@
 import unicodecsv
 from django.http import HttpResponse
-from .models import Product, FoodRecord, DisplayName, Measurement
-from collections import defaultdict, OrderedDict
+from .models import Product, FoodRecord, DisplayName, Measurement, GlucoseValue
+from collections import OrderedDict
 import datetime
 
 def export_as_csv_action(description="Export selected objects as CSV file",
@@ -193,6 +193,40 @@ def calculate_nutrition(instance):
             if nutrition_value:
                 if "sp" in nutrition_value:
                     nutrition_value = 0.0
+                ## TODO fix calculation of nutrition fields that use % as amount.
                 setattr(instance, field,
                         float(nutrition_value) * (instance.amount / float(instance.product.hoeveelheid)))
     return instance
+
+
+def calculate_all_ratings():
+    ratings = []
+    for food_record_obj in FoodRecord.objects.all():
+        rating = calculate_rating(food_record_obj)
+        if rating:
+            ratings.append((food_record_obj, rating))
+    return ratings
+
+def calculate_rating(food_record_obj):
+    user = food_record_obj.creator
+    glucose_objects = GlucoseValue.objects.filter(creator=user)
+    rating = None
+    if glucose_objects:
+        mean_glucose = sum(glucose_obj.glucose_value for glucose_obj in glucose_objects) / len(glucose_objects)
+        date = food_record_obj.datetime
+        initial_glucose_obj = glucose_objects.filter(
+            datetime__range=(date - datetime.timedelta(minutes=60), date + datetime.timedelta(minutes=5))). \
+            order_by("-datetime").first()
+        if initial_glucose_obj:
+            initial_glucose = initial_glucose_obj.glucose_value
+            glucoses = []
+            glucose_objects_range = glucose_objects.filter(
+                datetime__range=(date, date + datetime.timedelta(minutes=150)))
+            if len(glucose_objects_range) >= 4:  # have atleast 4 glucose values for a somewhat accurate rating
+                for glucose_obj in glucose_objects_range:
+                    glucoses.append(glucose_obj.glucose_value)
+                corrected_glucose = [g - initial_glucose for g in glucoses if g > initial_glucose]
+                auc = sum(corrected_glucose) / len(corrected_glucose)
+                rating = int((1 - (auc / mean_glucose)) * 10)
+                print(food_record_obj, rating)
+    return rating
