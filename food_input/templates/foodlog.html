@@ -95,6 +95,7 @@
                      <th scope="col">Eiwit</th>
                      <th scope="col">Vet</th>
                      <th scope="col">Delete<br>Copy</th>
+                    <th scope="col">Rating</th>
                      {% if user.is_staff %}<th scope="col">Creator</th>{% endif %}
 
                  </tr>
@@ -195,6 +196,7 @@
                                     <td>{{ food_record.field_03001|floatformat }}</td>
                                     <td><a href="/{{food_record.id}}/?select_date={% if selected_date == 'ALL' %}{{selected_date}}{% else %}{{ selected_date|date:'Y-m-d' }}{% endif %}&select_patient={{selected_patient}}"><span class="glyphicon glyphicon-remove"></span></a>
                                     <a href="?copy={{food_record.id}}&select_date={% if selected_date == 'ALL' %}{{selected_date}}{% else %}{{ selected_date|date:'Y-m-d' }}{% endif %}"><span class="glyphicon glyphicon-duplicate"></span></a></td>
+                                    <td>{% if food_record.rating %}{{ food_record.rating }} / 10{% endif %}</td>
                                     {% if user.is_staff %}<td>{{ food_record.creator }}</td>{% endif %}
                                  </tr>
                             </form>
