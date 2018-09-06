@@ -6,3 +6,4 @@ django-jquery
 six
 unicodecsv
 djangorestframework-jwt
+sklearn
