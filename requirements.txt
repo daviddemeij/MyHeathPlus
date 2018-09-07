@@ -8,3 +8,5 @@ unicodecsv
 djangorestframework
 djangorestframework-jwt
 sklearn
+numpy
+scipy
