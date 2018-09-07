@@ -7,3 +7,4 @@ six
 unicodecsv
 djangorestframework
 djangorestframework-jwt
+sklearn

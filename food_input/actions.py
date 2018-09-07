@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from .models import Product, FoodRecord, DisplayName, Measurement, GlucoseValue
 from collections import defaultdict, OrderedDict
 import datetime
+from sklearn.metrics import auc
 
 def export_as_csv_action(description="Export selected objects as CSV file",
                          fields=None, exclude=None, header=True):
@@ -214,26 +215,30 @@ def calculate_rating(food_record_obj):
     user = food_record_obj.creator
     glucose_objects = GlucoseValue.objects.filter(creator=user)
     rating = None
-    print("Calculate rating for: ", str(food_record_obj))
     food_record_obj.rating = None
     if glucose_objects:
         mean_glucose = sum(glucose_obj.glucose_value for glucose_obj in glucose_objects) / len(glucose_objects)
         date = food_record_obj.datetime
-        initial_glucose_obj = glucose_objects.filter(
-            datetime__range=(date - datetime.timedelta(minutes=60), date + datetime.timedelta(minutes=5))). \
-            order_by("-datetime").first()
-        if initial_glucose_obj:
-            initial_glucose = initial_glucose_obj.glucose_value
-            glucoses = []
+        initial_glucose_objects = glucose_objects.filter(
+            datetime__range=(date - datetime.timedelta(minutes=30), date + datetime.timedelta(minutes=5))). \
+            order_by("glucose_value")
+        if initial_glucose_objects:
+            # Use the median blood glucose as initial glucose value to avoid noise.
+            initial_glucose = initial_glucose_objects[int((len(initial_glucose_objects)-1)/2)].glucose_value
+            x = []
+            y = []
             glucose_objects_range = glucose_objects.filter(
-                datetime__range=(date, date + datetime.timedelta(minutes=150)))
+                datetime__range=(date, date + datetime.timedelta(minutes=150))).order_by("datetime")
             if len(glucose_objects_range) >= 4:  # have atleast 4 glucose values for a somewhat accurate rating
                 for glucose_obj in glucose_objects_range:
-                    glucoses.append(glucose_obj.glucose_value)
-                corrected_glucose = [g - initial_glucose for g in glucoses if g > initial_glucose]
-                if len(corrected_glucose) > 0:
-                    auc = sum(corrected_glucose) / len(corrected_glucose)
-                    rating = int((1 - (auc / mean_glucose)) * 10)
-                    food_record_obj.rating = rating
+                    x.append(glucose_obj.datetime.timestamp() / (60*60))
+                    y.append(glucose_obj.glucose_value)
+                measurement_length = x[-1] - x[0]
+                initial_auc = auc(x, [initial_glucose]*len(x))
+                # Postprandial Glycemic Response in mg / dl * h
+                PPGR = ((auc(x, y) - initial_auc)/measurement_length)*18.01801801801802
+                rating = max(1, min(10, int(round(10*(1-(PPGR/100)), 0))))
+                food_record_obj.rating = rating
+                print(food_record_obj.display_name, PPGR, rating)
     food_record_obj.save()
     return rating
