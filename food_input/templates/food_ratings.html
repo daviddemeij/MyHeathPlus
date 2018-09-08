@@ -6,8 +6,8 @@
   {% load widget_tweaks %}
 <div class="container" style="max-width: 95%">
 
-                {% for food_record, rating in ratings %}
-                    {{ food_record }} - {{ rating }} / 10<br>
+                {% for food_record, rating, PPGR in ratings %}
+                    {{ food_record }} - PPGR: {{ PPGR|floatformat }} mg / dl * h - Rating: {{ rating }} / 10<br>
 
                 {%  endfor  %}
 </div>

@@ -200,6 +200,7 @@ class FoodRecord(models.Model):
     measurement = models.ForeignKey(Measurement, on_delete=models.PROTECT, null=True, blank=True)
     amount_of_measurements = models.FloatField(null=True, blank=True)
     rating = models.IntegerField(null=True, blank=True)
+    PPGR = models.FloatField(null=True, blank=True)
 
     field_01001 = models.TextField(db_column='_01001', blank=True, null=True)
     field_01002 = models.TextField(db_column='_01002', blank=True, null=True)

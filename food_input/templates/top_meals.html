@@ -1,0 +1,43 @@
+{% extends 'base.html'%}
+
+{% block content %}
+{{ form.media }}
+
+  {% load widget_tweaks %}
+<div class="container" style="max-width: 95%">
+        <div class="table-responsive">
+            <table class="table">
+
+                <tr><th>Date & time</th><th>Meal</th><th>Amount<br>(gram)</th><th>Kcal</th><th>PPGR<br>(mg / dl * h)</th><th>Rating</th></tr></td></th>
+                {%  for meal, amount, kcal in meals %}
+                    <tr>
+                        <td>
+                            {{ meal.0.datetime|date:'Y-m-d H:i' }}
+                        </td>
+                        <td>
+                            {%  for food_record in meal %}
+                                {% if forloop.last %}
+                                    {{ food_record.display_name.name }}
+                                {% else %}
+                                    {{ food_record.display_name.name }},
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {{ amount }}
+                        </td>
+                        <td>
+                            {{ kcal }}
+                        </td>
+                        <td>
+                            {{ meal.0.PPGR|floatformat }}
+                        </td>
+                        <td>
+                            {{ meal.0.rating }} / 10
+                        </td>
+                    </tr>
+                {%  endfor  %}
+            </table>
+        </div>
+</div>
+{% endblock %}

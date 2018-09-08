@@ -208,7 +208,7 @@ def calculate_all_ratings(patient=None):
     for food_record_obj in food_record_objects:
         rating = calculate_rating(food_record_obj)
         if rating:
-            ratings.append((food_record_obj, rating))
+            ratings.append((food_record_obj, rating, food_record_obj.PPGR))
     return ratings
 
 def calculate_rating(food_record_obj):
@@ -239,5 +239,6 @@ def calculate_rating(food_record_obj):
                 PPGR = ((auc(x, y) - initial_auc)/measurement_length)*18.01801801801802
                 rating = max(1, min(10, int(round(10*(1-(PPGR/50)), 0))))
                 food_record_obj.rating = rating
+                food_record_obj.PPGR = PPGR
     food_record_obj.save()
     return rating
