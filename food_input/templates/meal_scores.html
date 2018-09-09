@@ -5,6 +5,9 @@
 
   {% load widget_tweaks %}
 <div class="container" style="max-width: 95%">
+
+        <br><b>Please note:</b> calculated meal scores are only accurate if there is atleast 3 hours between meals.<br><br>
+
         <div class="table-responsive">
             <table class="table">
 
@@ -14,7 +17,7 @@
                     <th>Amount<br>(gram)</th>
                     <th>Kcal</th>
                     <th><a href="http://care.diabetesjournals.org/content/32/suppl_2/S322.short"  data-toggle="tooltip" title="" data-original-title="Postprandial (post-meal) Glycemic Response <a style='color: #42f45c' href='http://care.diabetesjournals.org/content/32/suppl_2/S322.short'>(Gallwitz, 2009)</a>.">PPGR</a><br>(mg / dl * h)</th>
-                    <th><a href="" data-toggle="tooltip" data-original-title="Calculated using:<br>10 * (1 - (PPGR / 50)).">Rating</a></th>
+                    <th><a href="" data-toggle="tooltip" data-original-title="Calculated using:<br>10 * (1 - (PPGR / 50))">Rating</a></th>
                 </tr>
                 {%  for meal, amount, kcal in meals %}
                     <tr>
