@@ -58,22 +58,58 @@
             </div>
         </form>
             {% load static %}
+            <script type="text/javascript" src='{% static "js/Moment.js" %}'></script>
             <script src="{% static 'js/Chart.min.js' %}"></script>
 
         <canvas id="chartjs-0" class="chartjs" width="379" height="189" style="display: block; width: 379px; height: 189px;"></canvas>
         <script>
-            new Chart(document.getElementById("chartjs-0"),
-                {"type":"line",
-                "data":
-                    {"labels":[{% for glucose_value in glucose_values %}"{{ glucose_value.datetime|date:'H:i' }}",{% endfor %}],
-                    "datasets": [{"label":"Blood Glucose",
-                        "data":[{% for glucose_value in glucose_values %}"{{ glucose_value.glucose_value }}",{% endfor %}],
+            var config = {
+                "type":"line",
+                "data": {
+                    "datasets": [
+                        {
+                            "label":"Blood Glucose",
+                            "data":[
+                                {% for glucose_value in glucose_values %}
+                                    {% if forloop.last %}
+                                        {
+                                            x: "{{ glucose_value.datetime|date:'H:i' }}",
+                                            y: {{ glucose_value.glucose_value }}
+                                        }
+                                    {% else %}
+                                        {
+                                            x: "{{ glucose_value.datetime|date:'H:i' }}",
+                                            y: {{ glucose_value.glucose_value }}
+                                        },
+                                    {% endif %}
+                                {% endfor %}],
                         "fill":false,
                         "borderColor":"rgb(51, 187, 255)",
                         "lineTension":0.1}]},
-                    "options":{
-                    "legend": {"display": false}
-            }});</script>
+                "options":{
+                    "legend": {"display": false},
+                    "scales": {
+                        xAxes: [{
+                            type:   "time",
+                            time:   {
+                                parser: "HH:mm"
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: "Time"
+                            }
+                        }],
+                        yAxes: [{
+                            scaleLabel: {
+                                display: true,
+                                labelString: "Blood Glucose (mmol / L)"
+                            }
+                        }]
+                    }
+                }
+            };
+            new Chart(document.getElementById("chartjs-0"), config);
+        </script>
     </div>
 </div>
 {% endblock %}
