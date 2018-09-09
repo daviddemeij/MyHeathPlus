@@ -8,7 +8,14 @@
         <div class="table-responsive">
             <table class="table">
 
-                <tr><th>Date & time</th><th>Meal</th><th>Amount<br>(gram)</th><th>Kcal</th><th>PPGR<br>(mg / dl * h)</th><th>Rating</th></tr></td></th>
+                <tr>
+                    <th>Date & time</th>
+                    <th>Meal</th>
+                    <th>Amount<br>(gram)</th>
+                    <th>Kcal</th>
+                    <th><a href="http://care.diabetesjournals.org/content/32/suppl_2/S322.short"  data-toggle="tooltip" title="" data-original-title="Postprandial (post-meal) Glycemic Response <a style='color: #42f45c' href='http://care.diabetesjournals.org/content/32/suppl_2/S322.short'>(Gallwitz, 2009)</a>.">PPGR</a><br>(mg / dl * h)</th>
+                    <th><a href="" data-toggle="tooltip" data-original-title="Calculated using:<br>10 * (1 - (PPGR / 50)).">Rating</a></th>
+                </tr>
                 {%  for meal, amount, kcal in meals %}
                     <tr>
                         <td>
@@ -24,10 +31,10 @@
                             {% endfor %}
                         </td>
                         <td>
-                            {{ amount }}
+                            {{ amount|floatformat }}
                         </td>
                         <td>
-                            {{ kcal }}
+                            {{ kcal|floatformat }}
                         </td>
                         <td>
                             {{ meal.0.PPGR|floatformat }}
@@ -36,6 +43,9 @@
                             {{ meal.0.rating }} / 10
                         </td>
                     </tr>
+                {% empty %}
+                    <tr><td colspan="6">Sorry, no ratings available. Record your meals <a href="/foodlog/">here</a> and than
+                        upload your blood glucose data <a href="/upload_glucose/">here</a> to find out which meals are healthy for you.</td></tr>
                 {%  endfor  %}
             </table>
         </div>
