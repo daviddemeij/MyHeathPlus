@@ -29,5 +29,5 @@ urlpatterns = [path('', views.home),
                url('display_names/', views.update_display_names, name="update_display_names"),
                url('add_product', views.add_product, name="add_product"),
                url('calculate_food_ratings', views.calculate_food_ratings, name="calculate_food_ratings"),
-               url('top_meals', views.top_meals, name="top_meals")
+               url('meal_scores', views.meal_scores, name="meal_scores")
                ]

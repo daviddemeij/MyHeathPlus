@@ -23,7 +23,7 @@ def home(request):
     return render(request, 'home.html', {'form': form})
 
 @login_required
-def top_meals(request):
+def meal_scores(request):
     food_records = FoodRecord.objects.exclude(PPGR__isnull=True).order_by("PPGR").filter(creator=request.user)
     meals = []
     if food_records:           
@@ -42,7 +42,7 @@ def top_meals(request):
                 meal = [food_record]
                 prev_date = food_record.datetime
                 total_amount, total_kcal = float(food_record.amount), float(food_record.field_01001)
-    return render(request, 'top_meals.html', {"meals": meals})
+    return render(request, 'meal_scores.html', {"meals": meals})
 
 
 @login_required
