@@ -46,6 +46,32 @@ def count_occurrence():
         occurrence_list.append((product.product_omschrijving, occurrence))
     return sorted(occurrence_list, key=lambda tuple: tuple[1], reverse=True)
 
+def set_english_display_names():
+    display_names_used = []
+    all_display_names = DisplayName.objects.all().order_by("created_at")
+    for product in Product.objects.all():
+        display_name = all_display_names.filter(product=product).first()
+        if display_name:
+            print(display_name.name + " => " + display_name.product.product_description)
+            display_name.name_en = display_name.product.product_description
+            display_names_used.append(display_name)
+        else:
+            print("No display name for: " + product.product_description)
+    for display_name in all_display_names:
+        if display_name not in display_names_used:
+            #print(display_name.created_at)
+            english_name = input(display_name.name + " => " + display_name.name + " ? ") or display_name.name
+            print("setting english displayname of: " + display_name.name + " to " + english_name)
+            display_name.name_en = english_name
+            display_name.save()
+
+def set_english_measurements():
+    for measurement in Measurement.objects.all():
+        english_name = input(measurement.name + " => " + measurement.name + " ? ") or measurement.name
+        print("setting english measurement of: " + measurement.name + " to " + english_name)
+        measurement.name_en = english_name
+        measurement.save()
+
 def reset_display_names():
     for display_name in DisplayName.objects.all():
         display_name.delete()
@@ -240,5 +266,7 @@ def calculate_rating(food_record_obj):
                 rating = max(1, min(10, int(round(10*(1-(PPGR/50)), 0))))
                 food_record_obj.rating = rating
                 food_record_obj.PPGR = PPGR
+                food_record_obj.max_glucose = max(y)
+                food_record_obj.initial_glucose = initial_glucose
     food_record_obj.save()
     return rating

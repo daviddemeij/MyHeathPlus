@@ -16,6 +16,8 @@
                     <th>Meal</th>
                     <th>Amount<br>(gram)</th>
                     <th>Kcal</th>
+                    <th>Initial Glucose</th>
+                    <th>Max Glucose</th>
                     <th><a href="http://care.diabetesjournals.org/content/32/suppl_2/S322.short"  data-toggle="tooltip" title="" data-original-title="Postprandial (post-meal) Glycemic Response <a style='color: #42f45c' href='http://care.diabetesjournals.org/content/32/suppl_2/S322.short'>(Gallwitz, 2009)</a>.">PPGR</a><br>(mg / dl * h)</th>
                     <th><a href="" data-toggle="tooltip" data-original-title="Calculated using:<br>10 * (1 - (PPGR / 50))">Rating</a></th>
                 </tr>
@@ -38,6 +40,12 @@
                         </td>
                         <td>
                             {{ kcal|floatformat }}
+                        </td>
+                        <td>
+                            {{ meal.0.initial_glucose|floatformat }}
+                        </td>
+                        <td>
+                            {{ meal.0.max_glucose|floatformat }}
                         </td>
                         <td>
                             {{ meal.0.PPGR|floatformat }}

@@ -169,6 +169,7 @@ class Product(models.Model):
 class Measurement(models.Model):
     linked_product = models.ManyToManyField(Product, blank=True)
     name = models.TextField()
+    name_en = models.TextField(blank=True)
     amount = models.FloatField()
     created_at = models.DateTimeField(default=dt.datetime.now)
     def __str__(self):
@@ -178,6 +179,7 @@ class DisplayName(models.Model):
     id = models.AutoField(primary_key=True)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     name = models.TextField()
+    name_en = models.TextField(blank=True)
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(default=dt.datetime.now)
 
@@ -186,6 +188,7 @@ class DisplayName(models.Model):
             return self.product.fabrikantnaam + " " + self.name + " (" + self.product.productgroep_oms + ")"
         else:
             return self.name + " (" + self.product.productgroep_oms + ")"
+
 
 # Create your models here.
 class FoodRecord(models.Model):
@@ -201,6 +204,8 @@ class FoodRecord(models.Model):
     amount_of_measurements = models.FloatField(null=True, blank=True)
     rating = models.IntegerField(null=True, blank=True)
     PPGR = models.FloatField(null=True, blank=True)
+    max_glucose = models.FloatField(null=True, blank=True)
+    initial_glucose = models.FloatField(null=True, blank=True)
 
     field_01001 = models.TextField(db_column='_01001', blank=True, null=True)
     field_01002 = models.TextField(db_column='_01002', blank=True, null=True)
