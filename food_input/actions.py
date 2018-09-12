@@ -68,7 +68,7 @@ def set_english_display_names():
 def set_english_measurements():
     translations = {}
     for measurement in Measurement.objects.all():
-        if measurement.name_en == "":
+        if measurement.name_en == measurement.name:
             if measurement.name not in measurement.keys():
                 english_name = input(measurement.name + " => " + measurement.name + " ? ") or measurement.name
                 translations[measurement.name] = english_name
