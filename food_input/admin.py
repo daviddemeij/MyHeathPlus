@@ -13,7 +13,7 @@ class FoodRecordAdmin(admin.ModelAdmin):
 @admin.register(Measurement)
 class MeasurementAdmin(admin.ModelAdmin):
     form = MeasurementForm
-    list_display = ('name', 'amount')
+    list_display = ('name', 'name_en', 'amount')
     filter_vertical = ('linked_product',)
 
 @admin.register(DisplayName)
