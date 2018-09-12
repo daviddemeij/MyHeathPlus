@@ -66,11 +66,17 @@ def set_english_display_names():
             display_name.save()
 
 def set_english_measurements():
+    translations = {}
     for measurement in Measurement.objects.all():
-        english_name = input(measurement.name + " => " + measurement.name + " ? ") or measurement.name
-        print("setting english measurement of: " + measurement.name + " to " + english_name)
-        measurement.name_en = english_name
-        measurement.save()
+        if measurement.name_en == "":
+            if measurement.name not in measurement.keys():
+                english_name = input(measurement.name + " => " + measurement.name + " ? ") or measurement.name
+                translations[measurement.name] = english_name
+            else:
+                english_name = translations[measurement.name]
+            print("setting english measurement of: " + measurement.name + " to " + english_name)
+            measurement.name_en = english_name
+            measurement.save()
 
 def reset_display_names():
     for display_name in DisplayName.objects.all():
