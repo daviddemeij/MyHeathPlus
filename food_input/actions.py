@@ -55,6 +55,7 @@ def set_english_display_names():
             print(display_name.name + " => " + display_name.product.product_description)
             display_name.name_en = display_name.product.product_description
             display_names_used.append(display_name)
+            display_name.save()
         else:
             print("No display name for: " + product.product_description)
     for display_name in all_display_names:
