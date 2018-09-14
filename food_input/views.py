@@ -80,16 +80,18 @@ def update_display_names(request):
     if request.user.is_staff:
         form = SelectProductForm()
         display_names = []
+        selected_product = 0
         if request.method == 'POST':
             if request.POST.get('product'):
                 form = SelectProductForm(request.POST)
                 product = Product.objects.filter(id=request.POST.get('product')).first()
                 if product:
                     display_names = DisplayName.objects.filter(product=product)
-            elif request.POST.get('display_name_update'):
+            elif request.POST.get('display_name_update') and request.POST.get('display_name_en_update'):
                 display_name = DisplayName.objects.filter(id=request.POST.get('display_name_id')).first()
                 if display_name:
                     display_name.name = request.POST.get('display_name_update')
+                    display_name.name_en = request.POST.get('display_name_en_update')
                     display_name.save()
                     form = SelectProductForm(initial={'product': display_name.product})
                     display_names = DisplayName.objects.filter(product=display_name.product)
@@ -97,6 +99,7 @@ def update_display_names(request):
                 product = Product.objects.filter(id=request.POST.get('add_display_name_id')).first()
                 if product:
                     DisplayName.objects.create(name=request.POST.get('add_display_name'),
+                                               name_en = request.POST.get('add_display_name_en'),
                                                               product=product,
                                                               creator=request.user)
                     form = SelectProductForm(initial={'product': product})
@@ -106,11 +109,21 @@ def update_display_names(request):
             display_name = DisplayName.objects.filter(id=request.GET.get('display_name')).first()
             if display_name:
                 product = display_name.product
-                display_name.delete()
+                if not FoodRecord.objects.filter(display_name=display_name):
+                    display_name.delete()
+                else:
+                    print("Can't delete displayname " + display_name.name + " because it is used in the following food records:")
+                    for food_record in FoodRecord.objects.filter(display_name=display_name):
+                        print(food_record)
                 if product:
                     form = SelectProductForm(initial={'product': product})
                     display_names = DisplayName.objects.filter(product=product)
-        return render(request, 'display.html', {'form': form, 'display_names': display_names})
+
+        if len(display_names) > 0:
+            selected_product = display_names[0].product.id
+
+        return render(request, 'display.html', {'form': form, 'display_names': display_names,
+                                                'selected_product': selected_product})
     else:
         return redirect('/')
 

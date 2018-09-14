@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 import datetime as dt
+from django.utils.translation import get_language
+
 
 class Product(models.Model):
     id = models.IntegerField(blank=True, null=False, primary_key=True)
@@ -173,7 +175,9 @@ class Measurement(models.Model):
     amount = models.FloatField()
     created_at = models.DateTimeField(default=dt.datetime.now)
     def __str__(self):
-        return str(self.name) + " (" + str(self.amount) + " gram)"
+        name = self.name if get_language() == 'nl' else self.name_en
+        unit = "gram" if get_language() == 'nl' else "grams"
+        return name + " (" + str(self.amount) + " " + unit + ")"
 
 class DisplayName(models.Model):
     id = models.AutoField(primary_key=True)
@@ -183,11 +187,13 @@ class DisplayName(models.Model):
     creator = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(default=dt.datetime.now)
 
+
     def __str__(self):
+        name = self.name if get_language() == 'nl' else self.name_en
         if self.product.fabrikantnaam != "":
-            return self.product.fabrikantnaam + " " + self.name + " (" + self.product.productgroep_oms + ")"
+            return self.product.fabrikantnaam + " " + name + " (" + self.product.productgroep_oms + ")"
         else:
-            return self.name + " (" + self.product.productgroep_oms + ")"
+            return name + " (" + self.product.productgroep_oms + ")"
 
 
 # Create your models here.

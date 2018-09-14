@@ -2,18 +2,20 @@
 
 {% block content %}
 {% load widget_tweaks %}
+{% load i18n %}
 {{ form.media }}
+
 <div class="container" style="max-width: 95%">
     <div class="row">
-        <h2>Upload Glucose File</h2>
+        <h2>{% trans 'Upload Glucose File' %}</h2>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-group">
-                <label for="glucose_file">Glucose Export file</label>
+                <label for="glucose_file">{% trans 'Glucose Export file' %}</label>
                 <input class="form-control" type="file" name="csv_file" />
-                <span class="help-block">Currently we only support the glucose files exported from the Freestyle Libre.
-                To export your Freestyle Libre data download the <a href="https://www.freestylelibre.nl/help/products/software.html">
-                        Freestyle Libre software</a>, plug-in your reader and go to "File -> Export". <b>Please note: processing the data can take a while.</b></span>
+                <span class="help-block">{% blocktrans %}Currently we only support the glucose files exported from the
+                    Freestyle Libre. To export your Freestyle Libre data download the{% endblocktrans %} <a href="https://www.freestylelibre.nl/help/products/software.html">
+                        Freestyle Libre software</a>, {% blocktrans %}plug-in your reader and go to "File -> Export". <b>Please note: processing the data can take a while.</b>{% endblocktrans %}</span>
             </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-success">
@@ -23,7 +25,7 @@
         </form>
     </div>
     <div class="row">
-        <h2>Add Manual Glucose Measurements</h2>
+        <h2>{% trans 'Add Manual Glucose Measurements' %}</h2>
         <form method="post">
             {% csrf_token %}
             <div class="mb-3">
@@ -48,7 +50,7 @@
     <div class="row">
         <form method="get">
             <div class="form-group">
-                <label for="select_date">Geselecteerde datum</label>
+                <label for="select_date">{% trans 'Geselecteerde datum' %}</label>
                 <select onchange="this.form.submit()" name="select_date" class="form-control" id="id_select_date">
                     {% for date in date_list %}
                          <option {% ifequal selected_date date %} selected {% endifequal %}
@@ -58,7 +60,7 @@
             </div>
         </form>
             {% load static %}
-            <script type="text/javascript" src='{% static "js/Moment.js" %}'></script>
+            <script type="text/javascript" src='{% static "js/moment.min.js" %}'></script>
             <script src="{% static 'js/Chart.min.js' %}"></script>
 
         <canvas id="chartjs-0" class="chartjs" width="379" height="189" style="display: block; width: 379px; height: 189px;"></canvas>
@@ -68,18 +70,18 @@
                 "data": {
                     "datasets": [
                         {
-                            "label":"Blood Glucose",
+                            "label":"{% trans 'Blood Glucose' %}",
                             "data":[
                                 {% for glucose_value in glucose_values %}
                                     {% if forloop.last %}
                                         {
                                             x: "{{ glucose_value.datetime|date:'H:i' }}",
-                                            y: {{ glucose_value.glucose_value }}
+                                            y: {{ glucose_value.glucose_value|safe }}
                                         }
                                     {% else %}
                                         {
                                             x: "{{ glucose_value.datetime|date:'H:i' }}",
-                                            y: {{ glucose_value.glucose_value }}
+                                            y: {{ glucose_value.glucose_value|safe }}
                                         },
                                     {% endif %}
                                 {% endfor %}],
@@ -92,17 +94,17 @@
                         xAxes: [{
                             type:   "time",
                             time:   {
-                                parser: "HH:mm"
+                                parser: "LT"
                             },
                             scaleLabel: {
                                 display: true,
-                                labelString: "Time"
+                                labelString: "{% trans 'Time' %}"
                             }
                         }],
                         yAxes: [{
                             scaleLabel: {
                                 display: true,
-                                labelString: "Blood Glucose (mmol / L)"
+                                labelString: "{% trans 'Blood Glucose (mmol / L)' %}"
                             }
                         }]
                     }

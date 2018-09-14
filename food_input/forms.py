@@ -33,33 +33,37 @@ CATEGORIES = (("<geen categorie>", "<geen categorie>"),
 
 
 class FoodRecordForm(forms.ModelForm):
-    categorie = forms.ChoiceField(choices=CATEGORIES)
+    categorie = forms.ChoiceField(choices=CATEGORIES, label=_('Category'))
     eenheid = forms.ModelChoiceField(
         queryset=Measurement.objects.all().order_by('amount'),
-        widget=autocomplete.ModelSelect2(url='measurement-autocomplete', forward=['display_name'])
+        widget=autocomplete.ModelSelect2(url='measurement-autocomplete', forward=['display_name']),
+        label=_('Unit')
     )
     koppel_eenheid_aan_alle_producten_binnen_deze_categorie = forms.BooleanField(required=False)
-    aantal_eenheden = forms.FloatField()
-    datum = forms.DateField(
-        widget=DateWidget(attrs={'id': "id_datum", "autocomplete": "off"}, usel10n=True, bootstrap_version=3)
+    aantal_eenheden = forms.FloatField(label=_('Amount of units'))
+    date = forms.DateField(
+        widget=DateWidget(attrs={'id': "id_datum", "autocomplete": "off"}, usel10n=True, bootstrap_version=3),
+        label=_('Date')
     )
     tijd = forms.TimeField(
         widget=TimeWidget(attrs={'id': "id_tijd", "autocomplete": "off"}, usel10n=False, bootstrap_version=3,
-                          options={'format': 'hh:ii'})
+                          options={'format': 'hh:ii'}),
+        label=_('Time')
     )
 
     class Meta:
         model = FoodRecord
-        fields = ['patient_id', 'datum', 'tijd', 'missing_time', 'categorie', 'display_name', 'eenheid',
+        fields = ['patient_id', 'date', 'tijd', 'missing_time', 'categorie', 'display_name', 'eenheid',
                   'koppel_eenheid_aan_alle_producten_binnen_deze_categorie', 'aantal_eenheden']
         widgets = {
             'display_name': autocomplete.ModelSelect2(url='product-autocomplete', forward=['categorie']),
 
         }
-        labels = {'patient_id': _('Patient ID'),
-                  'amount': _('Hoeveelheid (gram)'),
-                  'display_name': _('Product'),
-                  'missing_time': _('Tijd Onbekend')}
+        labels = {
+            'missing_time': _('Time Unknown'),
+            'patient_id': _('Patient ID'),
+            'display_name': _('Product')
+        }
 
 
 class MeasurementForm(forms.ModelForm):
@@ -70,11 +74,13 @@ class MeasurementForm(forms.ModelForm):
 
 class GlucoseValueForm(forms.ModelForm):
     datum = forms.DateField(
-        widget=DateWidget(attrs={'id': "id_datum", "autocomplete": "off"}, usel10n=True, bootstrap_version=3)
+        widget=DateWidget(attrs={'id': "id_datum", "autocomplete": "off"}, usel10n=True, bootstrap_version=3),
+        label=_('Date')
     )
     tijd = forms.TimeField(
         widget=TimeWidget(attrs={'id': "id_tijd", "autocomplete": "off"}, usel10n=False, bootstrap_version=3,
-                          options={'format': 'hh:ii'})
+                          options={'format': 'hh:ii'}),
+        label=_('Time')
     )
 
     class Meta:
@@ -83,6 +89,7 @@ class GlucoseValueForm(forms.ModelForm):
         widgets = {
             'glucose_value': forms.NumberInput(attrs={'step': "0.1"})
         }
+        labels = {'glucose_value': _('glucose value')}
 
 
 class CopyMealForm(forms.Form):

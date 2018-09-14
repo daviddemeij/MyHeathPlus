@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.urls import path
 from . import views
 from . import api
@@ -29,5 +29,6 @@ urlpatterns = [path('', views.home),
                url('display_names/', views.update_display_names, name="update_display_names"),
                url('add_product', views.add_product, name="add_product"),
                url('calculate_food_ratings', views.calculate_food_ratings, name="calculate_food_ratings"),
-               url('meal_scores', views.meal_scores, name="meal_scores")
+               url('meal_scores', views.meal_scores, name="meal_scores"),
+                url('i18n/', include('django.conf.urls.i18n'))
                ]

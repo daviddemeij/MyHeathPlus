@@ -5,7 +5,7 @@
 
   {% load widget_tweaks %}
 {% load static %}
-
+  {% load i18n %}
 <section>
     <div class="container">
 
@@ -20,6 +20,7 @@
 <section class="bg-primary  text-white">
     <div class="container" style="max-width: 95%; font-size: medium" >
         <div class="row">
+            {% blocktrans %}
             <h2>How does it work?</h2>
             Through our platform you are able to precisely track what you eat and at what time you started your meal (which is important for our analysis).
             Besides tracking your food intake you will also track your blood glucose response to a meal. When you are measuring blood glucose it is recommended that you schedule
@@ -35,8 +36,10 @@
             possible to use <a style="color: #42f45c" href="https://www.bol.com/nl/l/bloedsuikermeters/N/20979/">finger-pricking</a> right before
             consuming a meal and then at 30, 60, 90 and 120 minutes after this meal.
             </p>
+            {% endblocktrans %}
         </div>
         <div class="row">
+            {% blocktrans %}
             <h2>The Science</h2>
             <p>It has been shown that the blood glucose response to a certain meal is an important indicator of health,
                 having a higher blood glucose peak after a meal means that you will store fat and experience decreased
@@ -61,8 +64,10 @@ M., Dye, L., Hulshof, T., Holst, J.J., et al. (2012). Impact of postprandial
 glycaemia on health and prevention of disease. Obes. Rev. 13, 923–984.
                 <a style='color: #42f45c' href='https://www.ncbi.nlm.nih.gov/pubmed/22780564'>(source)</a>"></span>. It can also result in a overproduction of insulin leading
                 to a blood glucose dip a few hours after your meal, which may cause overeating.</p>
+            {% endblocktrans %}
         </div>
         <div class="row">
+            {% blocktrans %}
             <p>
             Research has shown that people can have very different blood glucose responses to the same meal,
             based on their genetics, lifestyle and their gut microbiome composition
@@ -71,6 +76,7 @@ glycaemia on health and prevention of disease. Obes. Rev. 13, 923–984.
 163, 1079–1094 (2015).<a style='color: #42f45c' href='https://www.cell.com/cell/fulltext/S0092-8674(15)01481-6'>(source)</a>"></span>.
             That's why it is important to measure our actual blood glucose responses to certain meals giving us insight in
             what food is healthy for you and what food you might want to avoid.</p>
+            {% endblocktrans %}
         </div>
         <div class="row">
             <p>
@@ -84,11 +90,14 @@ glycaemia on health and prevention of disease. Obes. Rev. 13, 923–984.
 <section>
     <div class="container"  style="max-width: 95%">
         <div class="row">
+        {% blocktrans %}
             <br>
             This platform is still in <b>early stage development</b>. But you can already keep track of your food intake
             and upload your glucose data by registering through the form below. More functionalities will follow soon.
-            For any questions or feedback please reach us at <a href="mailto:myhealthplusnutrition@gmal.com">myhealthplusnutrition@gmail.com</a>.
-            <h2>Sign up</h2>
+            For any questions or feedback please reach us at <a href="mailto:myhealthplusnutrition@gmal.com">
+            myhealthplusnutrition@gmail.com</a>.
+        {% endblocktrans %}
+            <h2>{% trans "Sign up" %}</h2>
           <form method="post">
             {% csrf_token %}
             {% for field in form.visible_fields %}

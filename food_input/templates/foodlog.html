@@ -2,6 +2,7 @@
 
 {% block content %}
 {% load widget_tweaks %}
+{% load i18n %}
 {{ form.media }}
 <div class="container"  style="max-width: 95%">
     <div class="row">
@@ -57,7 +58,7 @@
         {% if user.is_staff %}
         <form method="get">
             <div class="form-group">
-                <label for="id_select_patient">Geselecteerde patiënt</label>
+                <label for="id_select_patient">Selected patient</label>
                 <select onchange="this.form.submit()" name="select_patient" class="form-control" id="id_select_patient">
                     {% for patient in patient_list %}
                          <option {% ifequal selected_patient patient.patient_id %} selected {% endifequal %}
@@ -71,9 +72,9 @@
         <form method="get">
             <input type="hidden" name="select_patient" value="{{ selected_patient }}">
             <div class="form-group">
-                <label for="id_select_patient">Geselecteerde datum</label>
+                <label for="id_select_patient">{% trans 'Selected date' %}</label>
                 <select onchange="this.form.submit()" name="select_date" class="form-control" id="id_select_date">
-                    <option value="ALL" {% if selected_date == "ALL" %} selected{% endif %}><b>Alle datums</b></option>
+                    <option value="ALL" {% if selected_date == "ALL" %} selected{% endif %}><b>All dates</b></option>
                     {% for date in date_list %}
                          <option {% ifequal selected_date date %} selected {% endifequal %}
                                  value="{{ date|date:'Y-m-d' }}">{{ date }}</option>
@@ -87,13 +88,13 @@
              <thead class="thead-light">
                  <tr>
                      {% if user.is_staff %}<th scope="col">Patient</th>{% endif %}
-                     <th scope="col">Tijd</th>
-                     <th scope="col">Product</th>
-                     <th scope="col">Hoeveelheid</th>
-                     <th scope="col">Kcal</th>
-                     <th scope="col">Kool-<br>hydraat</th>
-                     <th scope="col">Eiwit</th>
-                     <th scope="col">Vet</th>
+                     <th scope="col">{% trans 'Time' %}</th>
+                     <th scope="col">{% trans 'Product' %}</th>
+                     <th scope="col">{% trans 'Amount' %}</th>
+                     <th scope="col">{% trans 'Kcal' %}</th>
+                     <th scope="col">{% trans 'Carbs' %}</th>
+                     <th scope="col">{% trans 'Protein' %}</th>
+                     <th scope="col">{% trans 'Fat' %}</th>
                      <th scope="col">Delete<br>Copy</th>
                     <th scope="col">Rating</th>
                      {% if user.is_staff %}<th scope="col">Creator</th>{% endif %}

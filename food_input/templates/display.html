@@ -24,34 +24,35 @@
         {% for display_name in display_names %}
             <form method="post">
                 {% csrf_token %}
-                <div class="form-group">
+
                     <div class="input-group">
                         <input name="display_name_id" type="hidden" value="{{ display_name.id }}">
                         <input name="display_name_update" class="form-control" type="text" value="{{ display_name.name }}" onchange="this.form.submit()">
-                        <span class="input-group-addon" id="start-date"><a href="/display_names/?display_name={{ display_name.id }}"><span class="glyphicon glyphicon-remove"></span></a></span>
+                        <span class="input-group-addon">-</span>
+                        <input name="display_name_en_update" class="form-control" type="text" value="{{ display_name.name_en }}" onchange="this.form.submit()">
+                        <a href="/display_names/?display_name={{ display_name.id }}" class="input-group-addon">
+                                <span style="color:red" class="glyphicon glyphicon-remove"></span>
+
+                        </a>
                     </div>
-                </div>
+
             </form>
         {% endfor %}
-        <form method="post">
+        {% if display_names %}
+        <form method="post" name="new_display_name">
 
             {% csrf_token %}
-            <label for="add_display_names">Add New Display Name</label>
-            <input name="add_display_name_id" id="add_display_name_id" type="hidden" required>
-            <div class="form-group">
-                <div class="input-group">
-                    <input class="form-control" name="add_display_name" type="text" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-success">
-                    <span class="glyphicon glyphicon-ok"></span> Add New Display Name
-                </button>
+            <div class="input-group">
+                <input name="add_display_name_id" type="hidden" value="{{ selected_product }}">
+                <input name="add_display_name" class="form-control" type="text">
+                <span class="input-group-addon">-</span>
+                <input name="add_display_name_en" class="form-control" type="text">
+                <span onclick="document.forms['new_display_name'].submit();" class="input-group-addon">
+                    <span style="color:green" class="glyphicon glyphicon-plus"></span>
+                </span>
             </div>
         </form>
+        {% endif %}
     </div>
 </div>
-<script>
-    document.getElementById("add_display_name_id").value = document.getElementById("id_product").value;
-</script>
 {% endblock %}
