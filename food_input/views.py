@@ -7,6 +7,9 @@ from .actions import count_occurrence, convert_int, convert_float, convert_time,
     select_date_patient, copy_food_record, calculate_nutrition, convert_datetime, calculate_all_ratings, calculate_rating
 import datetime
 from django.contrib.auth import login, authenticate
+from django.utils.translation import get_language
+LANGUAGE = get_language()
+
 
 def home(request):
     if request.method == 'POST':
@@ -307,7 +310,10 @@ class ProductAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             for s in self.q.split(" "):
-                qs = qs.filter(name__icontains=s) | qs.filter(product__fabrikantnaam__icontains=s)
+                if LANGUAGE == "nl":
+                    qs = qs.filter(name__icontains=s) | qs.filter(product__fabrikantnaam__icontains=s)
+                else:
+                    qs = qs.filter(name_en__icontains=s) | qs.filter(product__fabrikantnaam__icontains=s)
 
         return qs.order_by('-product__occurrence')
 
@@ -323,7 +329,10 @@ class MeasurementAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             for s in self.q.split(" "):
-                qs = qs.filter(name__icontains=s) | qs.filter(amount__icontains=s)
+                if LANGUAGE == "nl":
+                    qs = qs.filter(name__icontains=s) | qs.filter(amount__icontains=s)
+                else:
+                    qs = qs.filter(name_en__icontains=s) | qs.filter(amount__icontains=s)
         elif product:
             qs = qs.filter(linked_product=product)
         return qs.order_by('amount')

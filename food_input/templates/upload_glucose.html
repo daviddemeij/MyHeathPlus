@@ -50,7 +50,7 @@
     <div class="row">
         <form method="get">
             <div class="form-group">
-                <label for="select_date">{% trans 'Geselecteerde datum' %}</label>
+                <label for="select_date">{% trans 'Selected date' %}</label>
                 <select onchange="this.form.submit()" name="select_date" class="form-control" id="id_select_date">
                     {% for date in date_list %}
                          <option {% ifequal selected_date date %} selected {% endifequal %}

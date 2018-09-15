@@ -5,32 +5,31 @@ from datetimewidget.widgets import DateWidget, TimeWidget
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.forms import UserCreationForm
 
-CATEGORIES = (("<geen categorie>", "<geen categorie>"),
-              ("Aardappelen", "Aardappelen"),
-              ("Graanproducten en bindmiddelen", "Graanproducten en bindmiddelen"),
-              ("Groenten", "Groenten"),
-              ("Fruit", "Fruit"),
-              ("Preparaten", "Preparaten"),
-              ("Eieren", "Eieren"),
-              ("Vlees, vleeswaren en gevogelte", "Vlees, vleeswaren en gevogelte"),
-              ("Vis", "Vis"),
-              ("Peulvruchten", "Peulvruchten"),
-              ("Noten, zaden en snacks", "Noten, zaden en snacks"),
-              ("Kruiden en specerijen", "Kruiden en specerijen"),
-              ("Diversen", "Diversen"),
-              ("Brood", "Brood"),
-              ("Gebak en koek", "Gebak en koek"),
-              ("Melk en melkproducten", "Melk en melkproducten"),
-              ("Kaas", "Kaas"),
-              ("Vetten, oliën en hartige sauzen", "Vetten, oliën en hartige sauzen"),
-              ("Samengestelde gerechten", "Samengestelde gerechten"),
-              ("Suiker, snoep, zoet beleg en zoete sauzen", "Suiker, snoep, zoet beleg en zoete sauzen"),
-              ("Alcoholische en niet-alcoholische dranken", "Alcoholische en niet-alcoholische dranken"),
-              ("Hartig broodbeleg", "Hartig broodbeleg"),
-              ("Sojaproducten en vegetarische producten", "Sojaproducten en vegetarische producten"),
-              ("Soepen", "Soepen")
+CATEGORIES = (("<geen categorie>", _("<no category>")),
+              ("Aardappelen", _("Potatoes")),
+              ("Graanproducten en bindmiddelen", _("Grain products")),
+              ("Groenten", _("Vegetables")),
+              ("Fruit", _("Fruit")),
+              ("Preparaten", _("Preparations")),
+              ("Eieren", _("Eggs")),
+              ("Vlees, vleeswaren en gevogelte", _("Meat and poultry")),
+              ("Vis", _("Fish")),
+              ("Peulvruchten", _("Legumes")),
+              ("Noten, zaden en snacks", _("Nuts, seeds and snacks")),
+              ("Kruiden en specerijen", _("Herbs and spices")),
+              ("Brood", _("Bread")),
+              ("Gebak en koek", _("Pastries and cakes")),
+              ("Melk en melkproducten", _("Milk and milk products")),
+              ("Kaas", _("Cheese")),
+              ("Vetten, oliën en hartige sauzen", _("Fats, oils and sauces")),
+              ("Samengestelde gerechten", _("Composed dishes")),
+              ("Suiker, snoep, zoet beleg en zoete sauzen", _("Sugar, candy, sweet spreads and sweet sauces")),
+              ("Alcoholische en niet-alcoholische dranken", _("Alcoholic and non-alcoholic drinks")),
+              ("Hartig broodbeleg", _("Savory sandwich fillings")),
+              ("Sojaproducten en vegetarische producten", _("Soy products and vegetarian products")),
+              ("Soepen", _("Soups")),
+              ("Diversen", _("Other"))
               )
-
 
 class FoodRecordForm(forms.ModelForm):
     categorie = forms.ChoiceField(choices=CATEGORIES, label=_('Category'))

@@ -64,9 +64,9 @@
 
       <ul class="nav navbar-nav">
         <li><a href="/">Home</a></li>
-        <li><a href="/foodlog">Food Logging</a></li>
-        <li><a href="/upload_glucose">Upload Blood Glucose</a></li>
-        <li><a href="/meal_scores">Meal Scores</a></li>
+        <li><a href="/foodlog">{% trans 'Food Diary' %}</a></li>
+        <li><a href="/upload_glucose">{% trans 'Upload Blood Glucose' %}</a></li>
+        <li><a href="/meal_scores">{% trans 'Meal Scores' %}</a></li>
       </ul>
 
         {% if user.is_authenticated %}
@@ -87,13 +87,13 @@
             </select>
         </form>
     </ul>
-        <p class="navbar-text navbar-right"><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></p>
+        <p class="navbar-text navbar-right"><a href="{% url 'logout'%}?next={{request.path}}">{% trans 'Logout' %}</a></p>
         {% if user.is_staff %}
             <p class="navbar-text navbar-right"><a href="/admin/">Admin</a></p>
         {% endif %}
-        <p class="navbar-text navbar-right">Signed in as {{ user.get_username }}</p>
+        <p class="navbar-text navbar-right">{% trans 'Signed in as' %} {{ user.get_username }}</p>
                 {% else %}
-        <p class="navbar-text navbar-right"><a href="{% url 'login'%}?next={{request.path}}">Login</a></p>
+        <p class="navbar-text navbar-right"><a href="{% url 'login'%}?next={{request.path}}">{% trans 'Login' %}</a></p>
                 {% endif %}
 
     </div><!-- /.navbar-collapse -->
@@ -105,8 +105,6 @@
         <div class="py-5 text-center">
             <h2><a href="/"><img src="{% static 'img/logo_animated.gif' %}" style="max-width:290px;height:auto"></a></h2>
 
-      <!--      <h2>Food input tool</h2>
-    <p class="lead">Tool om gemakkelijk voedingsdagboeken te verwerken</p>-->
         </div>
     </div>
         {% block content %}

@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# David de Meij <daviddemeij@gmail.com>, 2018.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-14 18:46+0200\n"
+"POT-Creation-Date: 2018-09-15 12:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,52 +18,174 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: forms.py:36
+#: forms.py:8
+#, fuzzy
+#| msgid "<geen categorie>"
+msgid "<no category>"
+msgstr "<no category>"
+
+#: forms.py:9
+msgid "Potatoes"
+msgstr "Aardappelen"
+
+#: forms.py:10
+msgid "Grain products"
+msgstr "Graanproducten"
+
+#: forms.py:11
+msgid "Vegetables"
+msgstr "Groenten"
+
+#: forms.py:12
+msgid "Fruit"
+msgstr "Fruit"
+
+#: forms.py:13
+msgid "Preparations"
+msgstr "Preparates"
+
+#: forms.py:14
+msgid "Eggs"
+msgstr "Eieren"
+
+#: forms.py:15
+msgid "Meat and poultry"
+msgstr "Vlees en gevogelte"
+
+#: forms.py:16
+msgid "Fish"
+msgstr "Vis"
+
+#: forms.py:17
+msgid "Legumes"
+msgstr "Peulvruchten"
+
+#: forms.py:18
+msgid "Nuts, seeds and snacks"
+msgstr "Noten, zaden en snacks"
+
+#: forms.py:19
+msgid "Herbs and spices"
+msgstr "Kruiden en specerijen"
+
+#: forms.py:20
+msgid "Bread"
+msgstr "Brood"
+
+#: forms.py:21
+msgid "Pastries and cakes"
+msgstr "Gebak en koek"
+
+#: forms.py:22
+msgid "Milk and milk products"
+msgstr "Melk en melkproducten"
+
+#: forms.py:23
+msgid "Cheese"
+msgstr "Kaas"
+
+#: forms.py:24
+msgid "Fats, oils and sauces"
+msgstr "Vetten, oliën en sauzen"
+
+#: forms.py:25
+msgid "Composed dishes"
+msgstr "Samengestelde gerechten"
+
+#: forms.py:26
+msgid "Sugar, candy, sweet spreads and sweet sauces"
+msgstr "Suiker, snoep, zoet beleg en zoete sauzen"
+
+#: forms.py:27
+msgid "Alcoholic and non-alcoholic drinks"
+msgstr "Alcoholische en niet-alcoholische dranken"
+
+#: forms.py:28
+msgid "Savory sandwich fillings"
+msgstr "Hartig broodbeleg"
+
+#: forms.py:29
+msgid "Soy products and vegetarian products"
+msgstr "Sojaproducten en vegetarische producten"
+
+#: forms.py:30
+msgid "Soups"
+msgstr "Soepen"
+
+#: forms.py:31
+msgid "Other"
+msgstr "Overig"
+
+#: forms.py:35
 msgid "Category"
 msgstr "Categorie"
 
-#: forms.py:40
+#: forms.py:39
 msgid "Unit"
 msgstr "Eenheid"
 
-#: forms.py:43
+#: forms.py:42
 msgid "Amount of units"
 msgstr "Aantal eenheden"
 
-#: forms.py:46 forms.py:78
+#: forms.py:45 forms.py:77
 msgid "Date"
 msgstr "Datum"
 
-#: forms.py:51 forms.py:83 templates/foodlog.html:91
+#: forms.py:50 forms.py:82 templates/foodlog.html:91
 #: templates/upload_glucose.html:101
 msgid "Time"
 msgstr "Tijd"
 
-#: forms.py:63
+#: forms.py:62
 msgid "Time Unknown"
 msgstr "Tijd Onbekend"
 
-#: forms.py:64
+#: forms.py:63
 msgid "Patient ID"
 msgstr "Patiënt ID"
 
-#: forms.py:65 templates/foodlog.html:92
+#: forms.py:64 templates/foodlog.html:92
 msgid "Product"
 msgstr "Product"
 
-#: forms.py:92
+#: forms.py:91
 msgid "glucose value"
 msgstr "glucose waarde"
 
-#: forms.py:102
+#: forms.py:101
 msgid "Email address"
 msgstr "e-mailadres"
 
-#: forms.py:103
+#: forms.py:102
 msgid "Required."
 msgstr "Verplicht."
 
-#: templates/foodlog.html:75
+#: templates/base.html:67
+msgid "Food Diary"
+msgstr "Voedingsdagboek"
+
+#: templates/base.html:68
+msgid "Upload Blood Glucose"
+msgstr "Bloedsuiker uploaden"
+
+#: templates/base.html:69
+msgid "Meal Scores"
+msgstr "Maaltijd Scores"
+
+#: templates/base.html:90
+msgid "Logout"
+msgstr "Uitloggen"
+
+#: templates/base.html:94
+msgid "Signed in as"
+msgstr "Aangemeld als"
+
+#: templates/base.html:96
+msgid "Login"
+msgstr "Inloggen"
+
+#: templates/foodlog.html:75 templates/upload_glucose.html:53
 msgid "Selected date"
 msgstr "Geselecteerde datum"
 
@@ -224,7 +346,7 @@ msgstr ""
 "                <a style='color: #42f45c' href='https://www.ncbi.nlm.nih.gov/"
 "pubmed/22780564'>(bron)</a>\"></span>\n"
 "                en op lange termijn verhoog je de kans op ziektes zoals "
-"Diabetes\n"
+"diabetes type 2\n"
 "                <span style=\"color: #42f45c\" class=\"footnote\" data-"
 "toggle=\"tooltip\" title=\"\" data-original-title=\"\n"
 "                American Diabetes Association (2015a).\n"
@@ -232,8 +354,8 @@ msgstr ""
 "(Suppl ), S31–S32.\n"
 "                <a style='color: #42f45c' href='http://care.diabetesjournals."
 "org/content/38/Supplement_1/S31'>(bron)</a>\">\n"
-"                </span>, Cardiovascular disease <span style=\"color: #42f45c"
-"\" class=\"footnote\" data-toggle=\"tooltip\" title=\"\" data-original-title="
+"                </span>, hart- en vaatziekten <span style=\"color: #42f45c\" "
+"class=\"footnote\" data-toggle=\"tooltip\" title=\"\" data-original-title="
 "\"\n"
 "                Gallwitz, B. (2009). Implications of postprandial glucose "
 "and weight control in\n"
@@ -242,7 +364,7 @@ msgstr ""
 "                Diabetes Federation guidelines. Diabetes Care 32 (Suppl 2 ), "
 "S322–S325.\n"
 "                <a style='color: #42f45c' href='https://www.ncbi.nlm.nih.gov/"
-"pmc/articles/PMC2811482/'>(bron)</a>\"></span> en Obesitas\n"
+"pmc/articles/PMC2811482/'>(bron)</a>\"></span> en obesitas\n"
 "                    <span style=\"color: #42f45c\" class=\"footnote\" data-"
 "toggle=\"tooltip\" title=\"\" data-original-title=\"\n"
 "                Blaak, E.E., Antoine, J.-M., Benton, D., Björck, I., "
@@ -310,7 +432,7 @@ msgid ""
 msgstr ""
 "\n"
 "            <br>\n"
-"            Dit platform is not in een <b>vroege ontwikkelingsfase</b>. Maar "
+"            Dit platform is nog in een <b>vroege ontwikkelingsfase</b>. Maar "
 "het is al mogelijk je voeding bij te houden\n"
 "            en je bloedsuiker up te loaden door via onderstaand formulier te "
 "registreren.  Meer functionaliteiten volgen spoedig.\n"
@@ -322,6 +444,38 @@ msgstr ""
 #: templates/home.html:100
 msgid "Sign up"
 msgstr "Aanmelden"
+
+#: templates/meal_scores.html:9
+msgid ""
+"<b>Please note:</b> calculated meal scores are only accurate if there is "
+"atleast 3 hours inbetween meals."
+msgstr ""
+"<b>Let op:</b> Berekende maaltijd scores zijn alleen betrouwbaar waneer er "
+"tenminste 3 uur tussen de maaltijden zit."
+
+#: templates/meal_scores.html:15
+msgid "Date & time"
+msgstr "Datum & tijd"
+
+#: templates/meal_scores.html:16
+msgid "Meal"
+msgstr "Maaltijd"
+
+#: templates/meal_scores.html:17
+msgid "Amount<br>(gram)"
+msgstr "Hoeveelheid<br>(grams)"
+
+#: templates/meal_scores.html:19
+msgid "Initial Glucose"
+msgstr "Initiële Bloedsuiker"
+
+#: templates/meal_scores.html:20
+msgid "Max Glucose"
+msgstr "Max Bloedsuiker"
+
+#: templates/meal_scores.html:22
+msgid "Calculated using:<br>10 * (1 - (PPGR / 50))"
+msgstr "Berekend met:<br>10 * (1 - (PPGR / 50))"
 
 #: templates/upload_glucose.html:10
 msgid "Upload Glucose File"
@@ -336,26 +490,23 @@ msgid ""
 "Currently we only support the glucose files exported from the\n"
 "                    Freestyle Libre. To export your Freestyle Libre data "
 "download the"
-msgstr "Op dit moment ondersteunen we alleen bloedsuiker bestanden geëxporteerd vanuit Freestyle Libre. "
-"                    Om een bestand vanuit de Freestyle Libre te exporteren download je de"
+msgstr ""
+"Op dit moment ondersteunen we alleen bloedsuiker bestanden geëxporteerd "
+"vanuit Freestyle Libre.                     Om een bestand vanuit de "
+"Freestyle Libre te exporteren download je de"
 
 #: templates/upload_glucose.html:18
 msgid ""
 "plug-in your reader and go to \"File -> Export\". <b>Please note: processing "
 "the data can take a while.</b>"
 msgstr ""
-"koppel je Freestyle Libre reader aan de computer en open het programma. Ga vervolgens naar \"Bestand -> Exporteren\". "
-"<b>Let op: het verwerken van de data kan even duren.</b>"
+"koppel je Freestyle Libre reader aan de computer en open het programma. Ga "
+"vervolgens naar \"Bestand -> Exporteren\". <b>Let op: het verwerken van de "
+"data kan even duren.</b>"
 
 #: templates/upload_glucose.html:28
 msgid "Add Manual Glucose Measurements"
 msgstr "Toevoegen Handmatige Bloedsuiker Metingen"
-
-#: templates/upload_glucose.html:53
-#, fuzzy
-#| msgid "Selected date"
-msgid "Geselecteerde datum"
-msgstr "Geselecteerde datum"
 
 #: templates/upload_glucose.html:73
 msgid "Blood Glucose"
@@ -364,9 +515,3 @@ msgstr "Bloedsuiker"
 #: templates/upload_glucose.html:107
 msgid "Blood Glucose (mmol / L)"
 msgstr "Bloedsuiker (mmol / L)"
-
-#~ msgid "date"
-#~ msgstr "datum"
-
-#~ msgid "time"
-#~ msgstr "tijd"
