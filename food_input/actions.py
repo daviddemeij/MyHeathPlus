@@ -49,17 +49,17 @@ def count_occurrence():
 def set_english_display_names():
     display_names_used = []
     all_display_names = DisplayName.objects.all().order_by("created_at")
-    for product in Product.objects.all():
-        display_name = all_display_names.filter(product=product).first()
-        if display_name:
-            print(display_name.name + " => " + display_name.product.product_description)
-            display_name.name_en = display_name.product.product_description
-            display_names_used.append(display_name)
-            display_name.save()
-        else:
-            print("No display name for: " + product.product_description)
+    #for product in Product.objects.all():
+    #    display_name = all_display_names.filter(product=product).first()
+    #    if display_name.name_en == "":
+    #        print(display_name.name + " => " + display_name.product.product_description)
+    #        display_name.name_en = display_name.product.product_description
+    #        display_names_used.append(display_name)
+    #        display_name.save()
+    #    else:
+    #        print("No display name for: " + product.product_description)
     for display_name in all_display_names:
-        if display_name not in display_names_used:
+        if display_name.name_en == "":
             #print(display_name.created_at)
             english_name = input(display_name.name + " => " + display_name.name + " ? ") or display_name.name
             print("setting english displayname of: " + display_name.name + " to " + english_name)

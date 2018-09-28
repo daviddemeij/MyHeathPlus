@@ -29,7 +29,7 @@ def home(request):
 def meal_scores(request):
     food_records = FoodRecord.objects.exclude(PPGR__isnull=True).order_by("PPGR").filter(creator=request.user)
     meals = []
-    if food_records:           
+    if food_records:
         prev_date = 0
         meal = None
         for food_record in food_records:
@@ -301,7 +301,7 @@ class ProductAutocomplete(autocomplete.Select2QuerySetView):
         if not self.request.user.is_authenticated:
             return Product.objects.none()
 
-        qs = DisplayName.objects.all()
+        qs = DisplayName.objects.exclude(name__isnull=True).exclude(name__exact='')
 
         category = self.forwarded.get('categorie', None)
 

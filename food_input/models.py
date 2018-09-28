@@ -191,9 +191,9 @@ class DisplayName(models.Model):
     def __str__(self):
         name = self.name if get_language() == 'nl' else self.name_en
         if self.product.fabrikantnaam != "":
-            return self.product.fabrikantnaam + " " + name + " (" + self.product.productgroep_oms + ")"
+            return self.product.fabrikantnaam + " " + name
         else:
-            return name + " (" + self.product.productgroep_oms + ")"
+            return name
 
 
 # Create your models here.

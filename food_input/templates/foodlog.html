@@ -82,7 +82,7 @@
                 </select>
             </div>
         </form>
-
+{% get_current_language as LANGUAGE_CODE %}
     <div class="table-responsive">
          <table class="table">
              <thead class="thead-light">
@@ -179,14 +179,28 @@
                                     {% endif %}
                                     <td>
                                         {{ food_record.product.fabrikantnaam }}
-                                        {% if food_record.display_name %}
-                                            {{ food_record.display_name.name }}
+                                        {% if LANGUAGE_CODE == "en-us" %}
+                                            {% if food_record.display_name %}
+                                                {{ food_record.display_name.name_en }}
+                                            {% else %}
+                                                {{ food_record.product.product_description }}
+                                            {% endif %}
                                         {% else %}
-                                            {{ food_record.product.product_omschrijving }}
+                                            {% if food_record.display_name %}
+                                                {{ food_record.display_name.name }}
+                                            {% else %}
+                                                {{ food_record.product.product_omschrijving }}
+                                            {% endif %}
                                         {% endif %}
                                     </td>
                                     {% if food_record.measurement and food_record.measurement.name != "gram" and food_record.amount_of_measurements %}
-                                    <td><input onchange="this.form.submit()" size="3" class="form-inline" name="update_eenheden" step="any" required value="{{ food_record.amount_of_measurements }}"> {{ food_record.measurement.name }} ({{ food_record.amount|floatformat }} gram)</td>
+                                    <td><input onchange="this.form.submit()" size="3" class="form-inline" name="update_eenheden" step="any" required value="{{ food_record.amount_of_measurements }}">
+                                    {% if LANGUAGE_CODE == "en-us" %}
+                                        {{ food_record.measurement.name_en }} ({{ food_record.amount|floatformat }} grams)
+                                    {% else %}
+                                        {{ food_record.measurement.name }} ({{ food_record.amount|floatformat }} gram)
+                                    {% endif %}
+                                    </td>
                                     {% else %}
                                     <td><input onchange="this.form.submit()" size="3" class="form-inline" name="update_eenheden" step="any" required value="{{ food_record.amount }}"> gram</td>
                                     {% endif %}

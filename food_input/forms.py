@@ -40,7 +40,7 @@ class FoodRecordForm(forms.ModelForm):
     )
     koppel_eenheid_aan_alle_producten_binnen_deze_categorie = forms.BooleanField(required=False)
     aantal_eenheden = forms.FloatField(label=_('Amount of units'))
-    date = forms.DateField(
+    datum = forms.DateField(
         widget=DateWidget(attrs={'id': "id_datum", "autocomplete": "off"}, usel10n=True, bootstrap_version=3),
         label=_('Date')
     )
@@ -52,7 +52,7 @@ class FoodRecordForm(forms.ModelForm):
 
     class Meta:
         model = FoodRecord
-        fields = ['patient_id', 'date', 'tijd', 'missing_time', 'categorie', 'display_name', 'eenheid',
+        fields = ['patient_id', 'datum', 'tijd', 'missing_time', 'categorie', 'display_name', 'eenheid',
                   'koppel_eenheid_aan_alle_producten_binnen_deze_categorie', 'aantal_eenheden']
         widgets = {
             'display_name': autocomplete.ModelSelect2(url='product-autocomplete', forward=['categorie']),

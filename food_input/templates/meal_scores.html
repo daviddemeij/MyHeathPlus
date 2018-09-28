@@ -21,6 +21,7 @@
                     <th><a href="http://care.diabetesjournals.org/content/32/suppl_2/S322.short"  data-toggle="tooltip" title="" data-original-title="Postprandial (post-meal) Glycemic Response <a style='color: #42f45c' href='http://care.diabetesjournals.org/content/32/suppl_2/S322.short'>(Gallwitz, 2009)</a>.">PPGR</a><br>(mg / dl * h)</th>
                     <th><a href="" data-toggle="tooltip" data-original-title="{% trans 'Calculated using:<br>10 * (1 - (PPGR / 50))' %}">Rating</a></th>
                 </tr>
+                {% get_current_language as LANGUAGE_CODE %}
                 {%  for meal, amount, kcal in meals %}
                     {% if meal.0.rating %}
                     <tr>
@@ -29,12 +30,12 @@
                         </td>
                         <td>
                             {%  for food_record in meal %}
-                                {% if forloop.last %}
-                                    {{ food_record.display_name.name }}
-                                {% else %}
-                                    {{ food_record.display_name.name }},
-                                {% endif %}
-                            {% endfor %}
+                            {% if LANGUAGE_CODE == "en-us" %}
+                                {{ food_record.display_name.name_en }}
+                            {% else %}
+                                {{ food_record.display_name.name }}
+                            {% endif %}
+                            {% if not forloop.last %}, {% endif %}{% endfor %}
                         </td>
                         <td>
                             {{ amount|floatformat }}
