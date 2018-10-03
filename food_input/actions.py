@@ -269,9 +269,8 @@ def calculate_rating(food_record_obj):
     food_record_obj.rating = None
     if glucose_objects:
         date = food_record_obj.datetime
-
-
-        initial_glucose = interpolate_glucose(glucose_objects, date)
+        initial_glucose_objects =  glucose_objects.filter(datetime__range=(date - datetime.timedelta(minutes=60), date + datetime.timedelta(minutes=30)))
+        initial_glucose = interpolate_glucose(initial_glucose_objects, date)
         if initial_glucose:
             # Use the median blood glucose as initial glucose value to avoid noise.
             x = []
