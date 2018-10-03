@@ -23,7 +23,7 @@
                 </tr>
                 {% get_current_language as LANGUAGE_CODE %}
                 {%  for meal, amount, kcal in meals %}
-                    {% if meal.0.rating %}
+                    {% if meal.0.datetime %}
                     <tr>
                         <td>
                             {{ meal.0.datetime|date:'Y-m-d H:i' }}
@@ -53,7 +53,7 @@
                             {{ meal.0.PPGR|floatformat }}
                         </td>
                         <td>
-                            {% if meal.0.rating == -1 %}
+                            {% if meal.0.rating == 0 %}
                                 {% trans "Unknown" %}
                             {% else %}
                                 {{ meal.0.rating }} / 10

@@ -292,7 +292,7 @@ def calculate_rating(food_record_obj):
                 food_record_obj.max_glucose = max(y)
                 food_record_obj.initial_glucose = initial_glucose
                 if initial_glucose > 7.0:
-                    food_record_obj.rating = -1
+                    food_record_obj.rating = 0
                 else:
                     food_record_obj.rating = rating
     food_record_obj.save()

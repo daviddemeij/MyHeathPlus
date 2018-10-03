@@ -27,7 +27,7 @@ def home(request):
 
 @login_required
 def meal_scores(request):
-    food_records = FoodRecord.objects.exclude(PPGR__isnull=True).order_by("PPGR").filter(creator=request.user)
+    food_records = FoodRecord.objects.exclude(PPGR__isnull=True).order_by("PPGR").order_by("-rating").filter(creator=request.user)
     meals = []
     if food_records:
         prev_date = 0

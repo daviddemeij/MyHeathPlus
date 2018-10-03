@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-03 12:00+0200\n"
+"POT-Creation-Date: 2018-10-03 12:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -206,6 +206,12 @@ msgstr "Eiwit"
 #: templates/foodlog.html:97
 msgid "Fat"
 msgstr "Vet"
+
+#: templates/foodlog.html:214 templates/meal_scores.html:57
+#, fuzzy
+#| msgid "Time Unknown"
+msgid "Unknown"
+msgstr "Onbekend"
 
 #: templates/home.html:23
 msgid "The Benefits"
@@ -520,15 +526,16 @@ msgstr "Max Bloedsuiker"
 msgid "Calculated using:<br>10 * (1 - (PPGR / 50))"
 msgstr "Berekend met:<br>10 * (1 - (PPGR / 50))"
 
-#: templates/meal_scores.html:61
+#: templates/meal_scores.html:65
 msgid ""
 "Sorry, no ratings available. Record your meals <a href=\"/foodlog/\">here</"
 "a> and than upload your blood glucose data <a href=\"/upload_glucose/"
 "\">here</a> to find out which meals are healthy for you."
 msgstr ""
 "Sorry, geen maaltijd scores beschikbaar. Voer  <a href=\"/foodlog/\">hier</"
-"a> een maaltijd en upload vervolgens je bloedsuiker data <a href=\"/upload_glucose/"
-"\">hier</a> om er achter te komen welke maaltijden gezond voor jou zijn."
+"a> een maaltijd en upload vervolgens je bloedsuiker data <a href=\"/"
+"upload_glucose/\">hier</a> om er achter te komen welke maaltijden gezond "
+"voor jou zijn."
 
 #: templates/upload_glucose.html:10
 msgid "Upload Glucose File"
