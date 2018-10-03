@@ -244,24 +244,40 @@ def calculate_all_ratings(patient=None):
             ratings.append((food_record_obj, rating, food_record_obj.PPGR))
     return ratings
 
+def interpolate_glucose(glucose_objects, date):
+    greater_than = glucose_objects.filter(datetime__gt=date).order_by('datetime')
+    lesser_than_equal = glucose_objects.filter(datetime__lte=date).order_by('-datetime')
+    if greater_than:
+        glucose_after = greater_than.first()
+        if lesser_than_equal:
+            glucose_before = lesser_than_equal.first()
+            dt_before = (date - glucose_before.datetime).seconds
+            dt_after = (glucose_after.datetime - date).seconds
+            dt_total = (glucose_after.datetime - glucose_before.datetime).seconds
+            return glucose_before.glucose_value * (dt_after / dt_total) + glucose_after.glucose_value * (dt_before / dt_total)
+        else:
+            return glucose_after.glucose_value()
+    else:
+        if lesser_than_equal:
+            return lesser_than_equal.first().glucose_value
+    return False
+
 def calculate_rating(food_record_obj):
     user = food_record_obj.creator
     glucose_objects = GlucoseValue.objects.filter(creator=user)
     rating = None
     food_record_obj.rating = None
     if glucose_objects:
-        mean_glucose = sum(glucose_obj.glucose_value for glucose_obj in glucose_objects) / len(glucose_objects)
         date = food_record_obj.datetime
-        initial_glucose_objects = glucose_objects.filter(
-            datetime__range=(date - datetime.timedelta(minutes=30), date + datetime.timedelta(minutes=5))). \
-            order_by("glucose_value")
-        if initial_glucose_objects:
+
+
+        initial_glucose = interpolate_glucose(glucose_objects, date)
+        if initial_glucose:
             # Use the median blood glucose as initial glucose value to avoid noise.
-            initial_glucose = initial_glucose_objects[int((len(initial_glucose_objects)-1)/2)].glucose_value
             x = []
             y = []
             glucose_objects_range = glucose_objects.filter(
-                datetime__range=(date, date + datetime.timedelta(minutes=150))).order_by("datetime")
+                datetime__range=(date - datetime.timedelta(minutes=1), date + datetime.timedelta(minutes=150))).order_by("datetime")
             if len(glucose_objects_range) >= 4:  # have atleast 4 glucose values for a somewhat accurate rating
                 for glucose_obj in glucose_objects_range:
                     x.append(glucose_obj.datetime.timestamp() / (60*60))
