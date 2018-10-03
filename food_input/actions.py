@@ -267,6 +267,9 @@ def calculate_rating(food_record_obj):
     glucose_objects = GlucoseValue.objects.filter(creator=user)
     rating = None
     food_record_obj.rating = None
+    food_record_obj.PPGR = None
+    food_record_obj.max_glucose = None
+    food_record_obj.initial_glucose = None
     if glucose_objects:
         date = food_record_obj.datetime
         initial_glucose_objects =  glucose_objects.filter(datetime__range=(date - datetime.timedelta(minutes=60), date + datetime.timedelta(minutes=30)))
