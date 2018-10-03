@@ -256,7 +256,7 @@ def interpolate_glucose(glucose_objects, date):
             dt_total = (glucose_after.datetime - glucose_before.datetime).seconds
             return glucose_before.glucose_value * (dt_after / dt_total) + glucose_after.glucose_value * (dt_before / dt_total)
         else:
-            return glucose_after.glucose_value()
+            return glucose_after.glucose_value
     else:
         if lesser_than_equal:
             return lesser_than_equal.first().glucose_value
