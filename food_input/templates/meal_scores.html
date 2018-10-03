@@ -30,12 +30,8 @@
                         </td>
                         <td>
                             {%  for food_record in meal %}
-                            {% if LANGUAGE_CODE == "en-us" %}
-                                {{ food_record.display_name.name_en }}
-                            {% else %}
-                                {{ food_record.display_name.name }}
-                            {% endif %}
-                            {% if not forloop.last %}, {% endif %}{% endfor %}
+                                {% if LANGUAGE_CODE == "en-us" %}{{ food_record.display_name.name_en }}{% else %}{{ food_record.display_name.name }}{% endif %}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
                         </td>
                         <td>
                             {{ amount|floatformat }}
