@@ -287,9 +287,13 @@ def calculate_rating(food_record_obj):
                 # Postprandial Glycemic Response in mg / dl * h
                 PPGR = ((auc(x, y) - initial_auc)/measurement_length)*18.01801801801802
                 rating = max(1, min(10, int(round(10*(1-(PPGR/50)), 0))))
-                food_record_obj.rating = rating
+
                 food_record_obj.PPGR = PPGR
                 food_record_obj.max_glucose = max(y)
                 food_record_obj.initial_glucose = initial_glucose
+                if initial_glucose > 7.0:
+                    food_record_obj.rating = -1
+                else:
+                    food_record_obj.rating = rating
     food_record_obj.save()
     return rating

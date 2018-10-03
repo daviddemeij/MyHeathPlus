@@ -6,7 +6,7 @@
 {% load i18n %}
 <div class="container" style="max-width: 95%">
 
-        <br>{% trans '<b>Please note:</b> calculated meal scores are only accurate if there is atleast 3 hours inbetween meals.' %}<br><br>
+        <br>{% trans '<b>Please note:</b> calculated meal scores are only accurate if there is atleast 3 hours inbetween meals. Also, when the initial glucose is above 7 the rating cannot be calculated accurately.' %}<br><br>
 
         <div class="table-responsive">
             <table class="table">
@@ -53,13 +53,16 @@
                             {{ meal.0.PPGR|floatformat }}
                         </td>
                         <td>
-                            {{ meal.0.rating }} / 10
+                            {% if meal.0.rating == -1 %}
+                                {% trans "Unknown" %}
+                            {% else %}
+                                {{ meal.0.rating }} / 10
+                            {% endif %}
                         </td>
                     </tr>
                     {% endif %}
                 {% empty %}
-                    <tr><td colspan="6">{% trans 'Sorry, no ratings available. Record your meals <a href="/foodlog/">here</a> and than
-                        upload your blood glucose data <a href="/upload_glucose/">here</a> to find out which meals are healthy for you.' %}</td></tr>
+                    <tr><td colspan="6">{% trans 'Sorry, no ratings available. Record your meals <a href="/foodlog/">here</a> and than upload your blood glucose data <a href="/upload_glucose/">here</a> to find out which meals are healthy for you.' %}</td></tr>
                 {%  endfor  %}
             </table>
         </div>
