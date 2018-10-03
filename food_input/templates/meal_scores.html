@@ -23,7 +23,7 @@
                 </tr>
                 {% get_current_language as LANGUAGE_CODE %}
                 {%  for meal, amount, kcal in meals %}
-                    {% if meal.0.datetime %}
+                    {% if meal.0.PPGR %}
                     <tr>
                         <td>
                             {{ meal.0.datetime|date:'Y-m-d H:i' }}
